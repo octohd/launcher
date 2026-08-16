@@ -511,6 +511,9 @@ public sealed class MainWindowViewModel : ObservableObject
     public void ReportSettingsError(string message) =>
         StatusMessage = $"Patch source settings could not be saved: {message}";
 
+    public void ReportExternalLinkError(string message) =>
+        StatusMessage = $"The website could not be opened: {message}";
+
     private Task BeginAddPatchSourceAsync()
     {
         PatchSourceError = string.Empty;

@@ -4,17 +4,44 @@
              RequestedThemeVariant="Dark">
   <Application.Resources>
     <FontFamily x:Key="OctoDisplayFont">avares://OctoHD/Assets/Fonts#Cinzel Decorative</FontFamily>
+    <LinearGradientBrush x:Key="OctoFantasyTextGradient"
+                         StartPoint="0%,0%" EndPoint="0%,100%">
+      <GradientStop Color="#FFF8D5" Offset="0" />
+      <GradientStop Color="#FFD77A" Offset="0.42" />
+      <GradientStop Color="#B96A1F" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="OctoFantasyButtonTextGradient"
+                         StartPoint="0%,0%" EndPoint="0%,100%">
+      <GradientStop Color="#FFFFFF" Offset="0" />
+      <GradientStop Color="#FFF9ED" Offset="0.48" />
+      <GradientStop Color="#FFEAC7" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="OctoPrimaryButtonGradient"
+                         StartPoint="0%,0%" EndPoint="0%,100%">
+      <GradientStop Color="#E09A35" Offset="0" />
+      <GradientStop Color="#B96818" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="OctoPrimaryButtonHoverGradient"
+                         StartPoint="0%,0%" EndPoint="0%,100%">
+      <GradientStop Color="#F4B24C" Offset="0" />
+      <GradientStop Color="#CD7922" Offset="1" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="OctoNavActiveGradient"
+                         StartPoint="0%,0%" EndPoint="100%,0%">
+      <GradientStop Color="#D12A3139" Offset="0" />
+      <GradientStop Color="#7820272F" Offset="1" />
+    </LinearGradientBrush>
     <SolidColorBrush x:Key="OctoBackground">#0D1117</SolidColorBrush>
-    <SolidColorBrush x:Key="OctoSurface">#DC161C24</SolidColorBrush>
-    <SolidColorBrush x:Key="OctoSurfaceRaised">#F01B242E</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoSurface">#ED141B22</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoSurfaceRaised">#FA1A232C</SolidColorBrush>
     <SolidColorBrush x:Key="OctoGold">#E3A13A</SolidColorBrush>
     <SolidColorBrush x:Key="OctoGoldBright">#FFC55E</SolidColorBrush>
     <SolidColorBrush x:Key="OctoBlue">#3695BE</SolidColorBrush>
     <SolidColorBrush x:Key="OctoText">#D5DEE4</SolidColorBrush>
     <SolidColorBrush x:Key="OctoHeading">#F0D39F</SolidColorBrush>
     <SolidColorBrush x:Key="OctoHeadingBright">#FFE0A0</SolidColorBrush>
-    <SolidColorBrush x:Key="OctoMuted">#8E9BA7</SolidColorBrush>
-    <SolidColorBrush x:Key="OctoBorder">#2D3944</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoMuted">#9AA7B2</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoBorder">#34424E</SolidColorBrush>
     <SolidColorBrush x:Key="ToggleSwitchFillOn">#C87C21</SolidColorBrush>
     <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver">#DE912E</SolidColorBrush>
     <SolidColorBrush x:Key="ToggleSwitchFillOnPressed">#A8661C</SolidColorBrush>
@@ -87,61 +114,73 @@
     </Style>
 
     <Style Selector="Button">
-      <Setter Property="Background" Value="#273440" />
+      <Setter Property="Background" Value="#222E38" />
       <Setter Property="Foreground" Value="{StaticResource OctoText}" />
       <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="Padding" Value="16,9" />
       <Setter Property="FontWeight" Value="SemiBold" />
-      <Setter Property="MinHeight" Value="38" />
-      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="MinHeight" Value="40" />
+      <Setter Property="CornerRadius" Value="7" />
     </Style>
 
     <Style Selector="Button:pointerover">
-      <Setter Property="Background" Value="#344656" />
-      <Setter Property="BorderBrush" Value="{StaticResource OctoGold}" />
+      <Setter Property="Background" Value="#2D3C48" />
+      <Setter Property="BorderBrush" Value="#7D673F" />
+    </Style>
+
+    <Style Selector="Button:pressed">
+      <Setter Property="Background" Value="#19232C" />
+      <Setter Property="BorderBrush" Value="#A97935" />
     </Style>
 
     <Style Selector="Button.primary">
-      <Setter Property="Background" Value="#C87C21" />
-      <Setter Property="Foreground" Value="#FFF8EC" />
+      <Setter Property="Background" Value="{StaticResource OctoPrimaryButtonGradient}" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
       <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
       <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
       <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
+    <Style Selector="Button.primary /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
+      <Setter Property="Effect">
+        <DropShadowEffect Color="#F0000000" BlurRadius="1" OffsetX="0" OffsetY="1.5" />
+      </Setter>
+    </Style>
+
     <Style Selector="Button.primary:pointerover">
-      <Setter Property="Background" Value="#DE912E" />
+      <Setter Property="Background" Value="{StaticResource OctoPrimaryButtonHoverGradient}" />
     </Style>
 
     <Style Selector="Button.play:pointerover /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="#DE912E" />
       <Setter Property="BorderBrush" Value="#E3A13A" />
-      <Setter Property="Foreground" Value="#FFF8EC" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
     </Style>
 
     <Style Selector="Button.play:pressed /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="#824513" />
       <Setter Property="BorderBrush" Value="#E3A13A" />
-      <Setter Property="Foreground" Value="#FFF8EC" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
     </Style>
 
     <Style Selector="Button.save:pointerover /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="#DE912E" />
       <Setter Property="BorderBrush" Value="#E3A13A" />
-      <Setter Property="Foreground" Value="#FFF8EC" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
     </Style>
 
     <Style Selector="Button.save:pressed /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Background" Value="#824513" />
       <Setter Property="BorderBrush" Value="#E3A13A" />
-      <Setter Property="Foreground" Value="#FFF8EC" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
     </Style>
 
     <Style Selector="Button.compact">
       <Setter Property="Padding" Value="8,5" />
-      <Setter Property="MinHeight" Value="28" />
-      <Setter Property="FontSize" Value="8" />
+      <Setter Property="MinHeight" Value="30" />
+      <Setter Property="FontSize" Value="9" />
       <Setter Property="HorizontalContentAlignment" Value="Center" />
       <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
@@ -152,26 +191,28 @@
     </Style>
 
     <Style Selector="Border.sidebar">
-      <Setter Property="Background" Value="#F011161D" />
-      <Setter Property="BorderBrush" Value="#26313A" />
+      <Setter Property="Background" Value="#F50E141A" />
+      <Setter Property="BorderBrush" Value="#35434E" />
       <Setter Property="BorderThickness" Value="0,0,1,0" />
       <Setter Property="Padding" Value="18,24,18,20" />
     </Style>
 
     <Style Selector="Border.navItem">
       <Setter Property="Background" Value="Transparent" />
-      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="CornerRadius" Value="7" />
       <Setter Property="Padding" Value="0,11" />
       <Setter Property="MinHeight" Value="42" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
     </Style>
 
     <Style Selector="Border.navItem.active">
-      <Setter Property="Background" Value="#B0242B33" />
+      <Setter Property="Background" Value="{StaticResource OctoNavActiveGradient}" />
     </Style>
 
     <Style Selector="Button.nav">
       <Setter Property="Background" Value="Transparent" />
       <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
       <Setter Property="HorizontalContentAlignment" Value="Stretch" />
       <Setter Property="Padding" Value="16,11" />
       <Setter Property="FontSize" Value="12" />
@@ -182,30 +223,35 @@
       <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
 
+    <Style Selector="Button.externalNav">
+      <Setter Property="Foreground" Value="#9BA9B3" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+
     <Style Selector="Border.sourcePanel">
-      <Setter Property="Background" Value="#B8151C23" />
-      <Setter Property="BorderBrush" Value="#28343E" />
+      <Setter Property="Background" Value="#E3151C23" />
+      <Setter Property="BorderBrush" Value="#35434E" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="6" />
-      <Setter Property="Padding" Value="13" />
+      <Setter Property="CornerRadius" Value="9" />
+      <Setter Property="Padding" Value="14" />
       <Setter Property="BoxShadow" Value="0 8 24 0 #55000000" />
     </Style>
 
     <Style Selector="Border.contextPanel">
-      <Setter Property="Background" Value="#DB151B22" />
-      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="Background" Value="#F0181F27" />
+      <Setter Property="BorderBrush" Value="#3C4B57" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="7" />
-      <Setter Property="Padding" Value="18,15" />
-      <Setter Property="BoxShadow" Value="0 8 26 0 #52000000" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="20,16" />
+      <Setter Property="BoxShadow" Value="0 10 28 0 #5C000000" />
     </Style>
 
     <Style Selector="Border.statusPanel">
       <Setter Property="Background" Value="#CE13212A" />
       <Setter Property="BorderBrush" Value="#25404E" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="6" />
-      <Setter Property="Padding" Value="12,9" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="14,10" />
       <Setter Property="BoxShadow" Value="0 5 18 0 #42000000" />
     </Style>
 
@@ -213,8 +259,8 @@
       <Setter Property="Background" Value="#E32B2115" />
       <Setter Property="BorderBrush" Value="#8F6024" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="6" />
-      <Setter Property="Padding" Value="12,9" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="14,10" />
       <Setter Property="BoxShadow" Value="0 5 18 0 #42000000" />
     </Style>
 
@@ -222,29 +268,66 @@
       <Setter Property="Background" Value="{StaticResource OctoSurface}" />
       <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="CornerRadius" Value="7" />
-      <Setter Property="Padding" Value="16" />
-      <Setter Property="BoxShadow" Value="0 8 22 0 #5C000000" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="18" />
+      <Setter Property="BoxShadow" Value="0 10 26 0 #66000000" />
     </Style>
 
     <Style Selector="Border.patchCard:pointerover">
-      <Setter Property="BorderBrush" Value="#7B6439" />
+      <Setter Property="BorderBrush" Value="#9A7840" />
       <Setter Property="Background" Value="{StaticResource OctoSurfaceRaised}" />
     </Style>
 
     <Style Selector="Border.patchCard.enabled">
-      <Setter Property="BorderBrush" Value="#D98A2B" />
+      <Setter Property="BorderBrush" Value="#806238" />
     </Style>
 
     <Style Selector="Border.patchCard.enabled:pointerover">
-      <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
+      <Setter Property="BorderBrush" Value="#D59A43" />
     </Style>
 
     <Style Selector="Border.statusBadge">
-      <Setter Property="CornerRadius" Value="4" />
-      <Setter Property="Padding" Value="8,2" />
+      <Setter Property="CornerRadius" Value="11" />
+      <Setter Property="Padding" Value="9,2" />
       <Setter Property="MinHeight" Value="22" />
       <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Border.sourceTag">
+      <Setter Property="Background" Value="#B516303D" />
+      <Setter Property="BorderBrush" Value="#535F9DB8" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Padding" Value="8,3" />
+      <Setter Property="MinHeight" Value="22" />
+      <Setter Property="HorizontalAlignment" Value="Left" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Border.installState">
+      <Setter Property="CornerRadius" Value="11" />
+      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Border.installState.valid">
+      <Setter Property="Background" Value="#2A1E7D50" />
+      <Setter Property="BorderBrush" Value="#6553B77D" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style Selector="Border.installState.invalid">
+      <Setter Property="Background" Value="#2A8B3E39" />
+      <Setter Property="BorderBrush" Value="#65D16C62" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style Selector="Border.variantBadge">
+      <Setter Property="Background" Value="#D025333E" />
+      <Setter Property="BorderBrush" Value="#35475562" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Padding" Value="7,3" />
     </Style>
 
     <Style Selector="TextBox, ComboBox">
@@ -253,7 +336,7 @@
       <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="MinHeight" Value="38" />
-      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="CornerRadius" Value="7" />
     </Style>
 
     <Style Selector="TextBox">
@@ -346,6 +429,11 @@
       <Setter Property="Padding" Value="9,0" />
     </Style>
 
+    <Style Selector="TextBox.searchField">
+      <Setter Property="Padding" Value="36,0,12,0" />
+      <Setter Property="FontSize" Value="11" />
+    </Style>
+
     <Style Selector="ToggleSwitch">
       <Setter Property="Foreground" Value="{StaticResource OctoMuted}" />
       <Setter Property="FontSize" Value="9" />
@@ -387,15 +475,21 @@
     <Style Selector="TextBlock.displayTitle">
       <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
       <Setter Property="FontWeight" Value="Bold" />
-      <Setter Property="Foreground" Value="{StaticResource OctoHeadingBright}" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyTextGradient}" />
       <Setter Property="LetterSpacing" Value="0.3" />
+      <Setter Property="Effect">
+        <DropShadowEffect Color="#E0000000" BlurRadius="1.5" OffsetX="0" OffsetY="2" />
+      </Setter>
     </Style>
 
     <Style Selector="TextBlock.cardTitle">
       <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
       <Setter Property="FontWeight" Value="Bold" />
-      <Setter Property="Foreground" Value="{StaticResource OctoHeading}" />
+      <Setter Property="Foreground" Value="{StaticResource OctoFantasyTextGradient}" />
       <Setter Property="LetterSpacing" Value="0.15" />
+      <Setter Property="Effect">
+        <DropShadowEffect Color="#E0000000" BlurRadius="1.5" OffsetX="0" OffsetY="2" />
+      </Setter>
     </Style>
 
     <Style Selector="ProgressBar">

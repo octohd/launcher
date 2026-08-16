@@ -8,7 +8,7 @@ PUBLISH_SCRIPT := scripts/publish.ps1
 
 CONFIGURATION ?= Release
 DEV_CONFIGURATION ?= Debug
-VERSION ?= 1.0.2
+VERSION ?= 1.0.3
 BUILD_NUMBER ?= 1
 UPDATE_REPOSITORY ?=
 RUNTIME ?=
@@ -34,7 +34,7 @@ help:
 	@echo OctoHD Make targets
 	@echo Development:
 	@echo   make dev                 Start the app in Debug mode
-	@echo   make dev-watch           Start with dotnet watch and hot reload
+	@echo   make dev-watch           Start with dotnet watch and reliable app restarts
 	@echo   make build               Build the solution
 	@echo   make build-debug         Build the solution in Debug mode
 	@echo   make test                Run all tests
@@ -86,7 +86,7 @@ dev run:
 	$(DOTNET) run --project $(APP_PROJECT) --configuration $(DEV_CONFIGURATION)
 
 dev-watch:
-	$(DOTNET) watch --project $(APP_PROJECT) run --configuration $(DEV_CONFIGURATION)
+	$(DOTNET) watch --no-hot-reload --project $(APP_PROJECT) run --configuration $(DEV_CONFIGURATION)
 
 clean:
 	$(DOTNET) clean $(SOLUTION) --configuration $(CONFIGURATION)

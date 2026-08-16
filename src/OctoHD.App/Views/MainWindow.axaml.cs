@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
@@ -95,6 +96,31 @@ public sealed partial class MainWindow : Window
             catch (Exception exception)
             {
                 viewModel.ReportSettingsError(exception.Message);
+            }
+        }
+    }
+
+    private void ExternalLink_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: string target }
+            || !Uri.TryCreate(target, UriKind.Absolute, out var uri)
+            || uri.Scheme != Uri.UriSchemeHttps)
+        {
+            return;
+        }
+
+        try
+        {
+            Process.Start(new ProcessStartInfo(uri.AbsoluteUri)
+            {
+                UseShellExecute = true
+            });
+        }
+        catch (Exception exception)
+        {
+            if (DataContext is MainWindowViewModel viewModel)
+            {
+                viewModel.ReportExternalLinkError(exception.Message);
             }
         }
     }
