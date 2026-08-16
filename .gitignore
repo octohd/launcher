@@ -1,0 +1,45 @@
+# .NET build and publish output
+[Bb]in/
+[Oo]bj/
+[Pp]ublish/
+releases/
+TestResults/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+*.trx
+*.pdb
+*.dSYM/
+
+# Visual Studio, Rider and VS Code
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# Local runtime state and diagnostics
+.octohd/
+*.log
+*.tmp
+*.bak
+crashdumps/
+
+# Local secrets and credential material
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.p8
+*.snk
+
+# OS metadata
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+plan.md

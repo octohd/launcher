@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a reproducible problem with OctoHD
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve OctoHD. Do not attach game files, credentials, private URLs, or unredacted personal paths.
+  - type: input
+    id: version
+    attributes:
+      label: OctoHD version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating system
+      options:
+        - Windows x64
+        - Windows ARM64
+        - Linux x64
+        - Linux ARM64
+        - macOS Intel
+        - macOS Apple Silicon
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the actual behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open OctoHD
+        2. Select ...
+        3. Enable ...
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message or additional context
+      description: Paste the exact error after removing usernames, credentials, and private paths.
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I downloaded OctoHD from this repository's Releases page.
+          required: true
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: This report contains no game files, credentials, or personal information.
+          required: true

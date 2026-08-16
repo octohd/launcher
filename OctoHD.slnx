@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/OctoHD.Core/OctoHD.Core.csproj" />
+  <Project Path="src/OctoHD.App/OctoHD.App.csproj" />
+  <Project Path="tests/OctoHD.Core.Tests/OctoHD.Core.Tests.csproj" />
+</Solution>

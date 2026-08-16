@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="512" height="512" viewBox="0 0 360 360"
+     role="img" aria-labelledby="icon-title icon-description">
+  <title id="icon-title">OctoHD Icon</title>
+  <desc id="icon-description">Achteckiges goldenes Wappen mit blau leuchtendem Kristallkern.</desc>
+
+  <defs>
+    <linearGradient id="gold-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff0a0"/>
+      <stop offset="0.4" stop-color="#d98d1d"/>
+      <stop offset="1" stop-color="#713208"/>
+    </linearGradient>
+    <linearGradient id="crest-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff3ad"/>
+      <stop offset="0.32" stop-color="#d99527"/>
+      <stop offset="0.68" stop-color="#7a3b0b"/>
+      <stop offset="1" stop-color="#e9ae3c"/>
+    </linearGradient>
+    <radialGradient id="crest-core" cx="48%" cy="42%" r="68%">
+      <stop offset="0" stop-color="#1d6f8d"/>
+      <stop offset="0.42" stop-color="#123d59"/>
+      <stop offset="0.78" stop-color="#0a1e31"/>
+      <stop offset="1" stop-color="#07111e"/>
+    </radialGradient>
+    <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8fbff"/>
+      <stop offset="0.28" stop-color="#65d8f6"/>
+      <stop offset="0.65" stop-color="#187fa9"/>
+      <stop offset="1" stop-color="#0b3859"/>
+    </linearGradient>
+    <filter id="icon-shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+      <feOffset dy="8" result="offset"/>
+      <feColorMatrix in="offset" type="matrix"
+        values="0 0 0 0 0.015  0 0 0 0 0.035  0 0 0 0 0.07  0 0 0 .85 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="blue-glow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="8" result="glow"/>
+      <feColorMatrix in="glow" type="matrix"
+        values="0 0 0 0 0.12  0 0 0 0 0.65  0 0 0 0 0.9  0 0 0 .8 0" result="blue"/>
+      <feMerge>
+        <feMergeNode in="blue"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g transform="translate(15 0)" filter="url(#icon-shadow)">
+    <path d="M165 25L226 50L279 101L303 180L279 259L226 310L165 335L104 310L51 259L27 180L51 101L104 50Z"
+          fill="#091422" stroke="#15283a" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M165 30L216 64L267 78L281 129L315 180L281 231L267 282L216 296L165 330L114 296L63 282L49 231L15 180L49 129L63 78L114 64Z"
+          fill="url(#crest-gold)" stroke="#522605" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M165 59L210 83L247 98L262 135L286 180L262 225L247 262L210 277L165 301L120 277L83 262L68 225L44 180L68 135L83 98L120 83Z"
+          fill="url(#crest-core)" stroke="#f2bd50" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M165 75L204 94L236 109L251 141L270 180L251 219L236 251L204 266L165 285L126 266L94 251L79 219L60 180L79 141L94 109L126 94Z"
+          fill="none" stroke="#25566d" stroke-width="3" opacity=".8"/>
+
+    <g fill="#74ddf4" stroke="#082238" stroke-width="4" filter="url(#blue-glow)">
+      <path d="M165 72L177 91L165 110L153 91Z"/>
+      <path d="M228 98L232 120L210 116L207 103Z"/>
+      <path d="M255 168L274 180L255 192L243 180Z"/>
+      <path d="M228 262L207 257L210 244L232 240Z"/>
+      <path d="M165 250L177 269L165 288L153 269Z"/>
+      <path d="M102 262L98 240L120 244L123 257Z"/>
+      <path d="M75 168L87 180L75 192L56 180Z"/>
+      <path d="M102 98L123 103L120 116L98 120Z"/>
+    </g>
+
+    <circle cx="165" cy="180" r="70" fill="#071523" stroke="#6d380b" stroke-width="16"/>
+    <circle cx="165" cy="180" r="65" fill="none" stroke="url(#gold-edge)" stroke-width="8"/>
+    <path d="M165 119L215 180L165 241L115 180Z"
+          fill="url(#crystal)" stroke="#a9efff" stroke-width="5" filter="url(#blue-glow)"/>
+    <path d="M165 119L165 241L139 180Z" fill="#e2faff" opacity=".2"/>
+    <path d="M165 119L191 180L165 241Z" fill="#072a48" opacity=".3"/>
+    <path d="M131 180H199" stroke="#dbf8ff" stroke-width="6" stroke-linecap="round" opacity=".88"/>
+    <circle cx="165" cy="180" r="9" fill="#fff7c9" stroke="#d18d25" stroke-width="4"/>
+  </g>
+</svg>

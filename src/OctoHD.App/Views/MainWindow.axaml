@@ -1,0 +1,258 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:OctoHD.App.ViewModels"
+        x:Class="OctoHD.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="OctoHD Launcher"
+        Width="1240"
+        Height="760"
+        MinWidth="1060"
+        MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/Brand/OctoHD-Icon.ico"
+        Background="{StaticResource OctoBackground}">
+  <Grid>
+    <Image Source="/Assets/Backgrounds/octohd-fantasy-bg.png"
+           Stretch="UniformToFill" Opacity="0.76" />
+    <Border Background="#78070C12" />
+
+    <Grid ColumnDefinitions="214,*">
+      <Grid Grid.Column="0" ClipToBounds="True">
+        <Border Classes="sidebar">
+      <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <StackPanel Spacing="7">
+          <Image Width="174" Height="48"
+                 Source="/Assets/Brand/OctoHD.png"
+                 Stretch="Uniform"
+                 HorizontalAlignment="Left" />
+          <TextBlock Text="PATCH LAUNCHER" Margin="4,0,0,0"
+                     FontSize="10" LetterSpacing="2.2"
+                     Foreground="{StaticResource OctoMuted}" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Margin="0,34,0,0" Spacing="8">
+          <TextBlock Text="LIBRARY" Margin="0,0,0,4" FontSize="9" FontWeight="Bold"
+                     LetterSpacing="1.5" Foreground="#667581" />
+          <Border Classes="navItem active">
+            <Grid ColumnDefinitions="4,*" ColumnSpacing="12">
+              <Border Background="{StaticResource OctoGold}" CornerRadius="2" />
+              <TextBlock Grid.Column="1" Text="HD PATCHES" FontSize="12" FontWeight="Bold"
+                         Foreground="{StaticResource OctoHeading}"
+                         VerticalAlignment="Center" />
+            </Grid>
+          </Border>
+          <Button Classes="nav" Click="SelectFolder_OnClick"
+                  ToolTip.Tip="Select or open the OctoWoW game folder">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+              <TextBlock Text="GAME FOLDER" VerticalAlignment="Center" />
+              <Path Grid.Column="1" Width="8" Height="8"
+                    Data="M 3,6 L 3,13 L 10,13 L 10,10 M 7,3 L 13,3 L 13,9 M 13,3 L 6,10"
+                    Stroke="{StaticResource OctoMuted}" StrokeThickness="0.85"
+                    StrokeLineCap="Round" StrokeJoin="Round"
+                    Stretch="Uniform" VerticalAlignment="Center" />
+            </Grid>
+          </Button>
+        </StackPanel>
+
+        <Border Grid.Row="3" Classes="sourcePanel">
+          <StackPanel Spacing="7">
+            <TextBlock Text="PATCH SOURCE" FontSize="9" FontWeight="Bold"
+                       LetterSpacing="1.1" Foreground="#667581" />
+            <ComboBox ItemsSource="{Binding PatchSources}"
+                      SelectedItem="{Binding SelectedPatchSource}"
+                      SelectionChanged="PatchSource_OnSelectionChanged"
+                      MinHeight="34">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:PatchSourceItemViewModel">
+                  <TextBlock Text="{Binding DisplayName}" FontSize="11" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="{Binding PatchSourceDetail}" FontSize="9" TextWrapping="Wrap"
+                       Foreground="{StaticResource OctoMuted}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+              <Button Classes="compact" Content="+ ADD SOURCE"
+                      Command="{Binding BeginAddPatchSourceCommand}" />
+              <Button Grid.Column="1" Classes="compact danger" Content="REMOVE"
+                      Command="{Binding RemovePatchSourceCommand}"
+                      IsVisible="{Binding CanRemovePatchSource}" />
+            </Grid>
+            <StackPanel Spacing="6" IsVisible="{Binding IsAddingPatchSource}">
+              <TextBox Classes="sourceField" Text="{Binding NewPatchSourceName}"
+                       PlaceholderText="Source name" />
+              <TextBox Classes="sourceField" Text="{Binding NewPatchSourceUrl}"
+                       PlaceholderText="https://bucket.example/patches/" />
+              <TextBlock Text="{Binding PatchSourceError}"
+                         IsVisible="{Binding HasPatchSourceError}"
+                         FontSize="9" TextWrapping="Wrap" Foreground="#F28B79" />
+              <Grid ColumnDefinitions="*,*" ColumnSpacing="6">
+                <Button Classes="compact primary" Content="SAVE"
+                        Command="{Binding SavePatchSourceCommand}" />
+                <Button Grid.Column="1" Classes="compact" Content="CANCEL"
+                        Command="{Binding CancelAddPatchSourceCommand}" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+        </Border>
+      </Grid>
+
+      <Grid Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+      <Grid Grid.Row="0" Margin="30,24,30,18" ColumnDefinitions="*,Auto" ColumnSpacing="20">
+        <StackPanel Spacing="3">
+          <TextBlock Text="HD Patches" Classes="displayTitle" FontSize="27" />
+          <TextBlock Text="Manage your OctoWoW visual upgrades" Classes="muted" FontSize="12" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <Button Content="RESCAN" Command="{Binding RefreshCommand}" />
+          <Button Classes="primary play" Content="PLAY" Command="{Binding LaunchCommand}"
+                  ToolTip.Tip="Open OctoLauncher" />
+        </StackPanel>
+      </Grid>
+
+      <Border Grid.Row="1" Margin="30,0,30,14" Classes="contextPanel">
+        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="28">
+          <StackPanel Spacing="5" VerticalAlignment="Center">
+            <TextBlock Text="OCTOWOW INSTALLATION" FontSize="9" FontWeight="Bold"
+                       LetterSpacing="1.3" Foreground="{StaticResource OctoGold}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+              <TextBlock Text="{Binding DataFolder}" FontSize="14" FontWeight="SemiBold"
+                         Foreground="{StaticResource OctoHeading}"
+                         TextTrimming="CharacterEllipsis" />
+              <TextBlock Grid.Column="1" Text="✓" FontSize="14" FontWeight="Bold" Foreground="#61C98B"
+                         IsVisible="{Binding IsInstallationValid}" VerticalAlignment="Center" />
+              <TextBlock Grid.Column="1" Text="✕" FontSize="13" FontWeight="Bold" Foreground="#EF7468"
+                         IsVisible="{Binding IsInstallationInvalid}" VerticalAlignment="Center" />
+            </Grid>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="24" VerticalAlignment="Center">
+            <StackPanel Spacing="2">
+              <TextBlock Text="{Binding ActiveCount}" FontSize="19" Classes="displayTitle" />
+              <TextBlock Text="ACTIVE" FontSize="9" LetterSpacing="1" Classes="muted" />
+            </StackPanel>
+            <StackPanel Spacing="2">
+              <TextBlock Text="{Binding InstalledCount}" FontSize="19" Classes="displayTitle" />
+              <TextBlock Text="INSTALLED" FontSize="9" LetterSpacing="1" Classes="muted" />
+            </StackPanel>
+            <StackPanel Spacing="2">
+              <TextBlock Text="{Binding UpdateCount}" FontSize="19" Classes="displayTitle" />
+              <TextBlock Text="UPDATES" FontSize="9" LetterSpacing="1" Classes="muted" />
+            </StackPanel>
+          </StackPanel>
+
+          <Button Grid.Column="2" Content="SELECT FOLDER" Click="SelectFolder_OnClick"
+                  VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="2" Margin="30,0,30,14" Classes="statusPanel"
+              IsVisible="{Binding HasStatusMessage}">
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+          <TextBlock Text="◆" Foreground="#62B8D9" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" TextWrapping="Wrap"
+                     Foreground="#C8D8DF" FontSize="11" VerticalAlignment="Center" />
+        </Grid>
+      </Border>
+
+      <Border Grid.Row="3" Margin="30,0,30,14" Classes="updatePanel"
+              IsVisible="{Binding IsUpdateReady}">
+        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
+          <TextBlock Text="↓" FontSize="17" FontWeight="Bold"
+                     Foreground="{StaticResource OctoGoldBright}" VerticalAlignment="Center" />
+          <TextBlock Grid.Column="1" Text="{Binding UpdatePromptText}" FontSize="11"
+                     Foreground="{StaticResource OctoHeading}" VerticalAlignment="Center" />
+          <Button Grid.Column="2" Classes="compact primary" Content="RESTART NOW"
+                  Command="{Binding RestartUpdateCommand}" />
+          <Button Grid.Column="3" Classes="compact" Content="LATER"
+                  Command="{Binding DeferUpdateCommand}" />
+        </Grid>
+      </Border>
+
+      <Grid Grid.Row="4" Margin="30,0,30,14" ColumnDefinitions="*,230,150,Auto" ColumnSpacing="10"
+            IsVisible="{Binding IsInstallationValid}">
+        <StackPanel Spacing="2" VerticalAlignment="Center">
+          <TextBlock Text="PATCH LIBRARY" FontSize="10" FontWeight="Bold"
+                     LetterSpacing="1.3" Foreground="{StaticResource OctoGold}" />
+          <TextBlock Text="{Binding SummaryText}" FontSize="11" Classes="muted" />
+        </StackPanel>
+        <TextBox Grid.Column="1" Text="{Binding SearchText}" PlaceholderText="Search patches" />
+        <ComboBox Grid.Column="2" ItemsSource="{Binding FilterOptions}"
+                  SelectedItem="{Binding SelectedFilter}" />
+        <Button Grid.Column="3" Content="UPDATE ALL" Command="{Binding UpdateAllCommand}" />
+      </Grid>
+
+      <ScrollViewer Grid.Row="5" Margin="30,0,16,0" HorizontalScrollBarVisibility="Disabled"
+                    IsVisible="{Binding IsInstallationValid}">
+        <ItemsControl ItemsSource="{Binding VisiblePatches}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <UniformGrid Columns="2" />
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="vm:PatchItemViewModel">
+              <Border Classes="patchCard" Classes.enabled="{Binding IsEnabled}"
+                      MinHeight="232" Margin="0,0,14,14">
+                <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" RowSpacing="10">
+                  <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                    <TextBlock Text="{Binding Category}" FontSize="9" FontWeight="Bold"
+                               LetterSpacing="1.1" Foreground="{StaticResource OctoGold}" />
+                    <TextBlock Grid.Column="1" Text="{Binding VersionText}" FontSize="10"
+                               Foreground="{StaticResource OctoMuted}" VerticalAlignment="Center" />
+                    <Border Grid.Column="2" Background="#293641" CornerRadius="4" Padding="7,4">
+                      <TextBlock Text="{Binding VariantText}" FontSize="8" FontWeight="Bold"
+                                 Foreground="#C7D4DD" />
+                    </Border>
+                  </Grid>
+
+                  <TextBlock Grid.Row="1" Text="{Binding Title}" Classes="cardTitle" FontSize="17" />
+
+                  <TextBlock Grid.Row="2" Text="{Binding Description}" TextWrapping="Wrap"
+                             Classes="muted" FontSize="11" LineHeight="17" />
+
+                  <StackPanel Grid.Row="3" Spacing="6">
+                    <TextBlock Text="{Binding SourceLabel}" FontSize="9" FontWeight="SemiBold"
+                               LetterSpacing="0.8" Foreground="#68B9D9" />
+                    <TextBlock Text="{Binding DependencyText}" IsVisible="{Binding HasDependencies}"
+                               TextWrapping="Wrap" FontSize="10" Foreground="#D4B46A" />
+                    <TextBlock Text="{Binding DetailMessage}" IsVisible="{Binding HasDetailMessage}"
+                               TextWrapping="Wrap" FontSize="10" Foreground="{Binding DetailForeground}" />
+                  </StackPanel>
+
+                  <StackPanel Grid.Row="4" Spacing="5" IsVisible="{Binding IsBusy}">
+                    <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" />
+                    <TextBlock Text="{Binding OperationText}" IsVisible="{Binding HasOperationText}"
+                               FontSize="9" Foreground="{StaticResource OctoMuted}" />
+                  </StackPanel>
+
+                  <Grid Grid.Row="5" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="10">
+                    <Border Classes="statusBadge" Background="{Binding StatusBackground}">
+                      <TextBlock Text="{Binding StatusText}" FontSize="9" FontWeight="SemiBold"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Grid.Column="1" Text="{Binding SizeText}" FontSize="10"
+                               Foreground="{StaticResource OctoMuted}" VerticalAlignment="Center" />
+                    <Button Grid.Column="3" Content="{Binding ActionLabel}"
+                            Command="{Binding InstallCommand}"
+                            IsVisible="{Binding ShowInstallButton}"
+                            IsEnabled="{Binding CanInstall}" />
+                    <ToggleSwitch Grid.Column="4"
+                                  IsChecked="{Binding IsEnabled, Mode=OneWay}"
+                                  IsEnabled="{Binding CanToggle}"
+                                  Command="{Binding ToggleCommand}"
+                                  OnContent="ON"
+                                  OffContent="OFF"
+                                  VerticalAlignment="Center" />
+                  </Grid>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

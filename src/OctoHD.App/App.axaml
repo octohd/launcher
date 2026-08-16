@@ -1,0 +1,267 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OctoHD.App.App"
+             RequestedThemeVariant="Dark">
+  <Application.Resources>
+    <FontFamily x:Key="OctoDisplayFont">avares://OctoHD/Assets/Fonts#Cinzel Decorative</FontFamily>
+    <SolidColorBrush x:Key="OctoBackground">#0D1117</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoSurface">#DC161C24</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoSurfaceRaised">#F01B242E</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoGold">#E3A13A</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoGoldBright">#FFC55E</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoBlue">#3695BE</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoText">#D5DEE4</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoHeading">#F0D39F</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoHeadingBright">#FFE0A0</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoMuted">#8E9BA7</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoBorder">#2D3944</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchFillOn">#C87C21</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver">#DE912E</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchFillOnPressed">#A8661C</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchFillOnDisabled">#72512E</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOn">#FFC55E</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPointerOver">#FFE0A0</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnPressed">#E3A13A</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchStrokeOnDisabled">#80623C</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOn">#FFF8EC</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver">#FFFFFF</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPressed">#FFE9BE</SolidColorBrush>
+    <SolidColorBrush x:Key="ToggleSwitchKnobFillOnDisabled">#B9A98E</SolidColorBrush>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <Style Selector="Window">
+      <Setter Property="FontFamily" Value="Inter" />
+      <Setter Property="Foreground" Value="{StaticResource OctoText}" />
+    </Style>
+
+    <Style Selector="Button">
+      <Setter Property="Background" Value="#273440" />
+      <Setter Property="Foreground" Value="{StaticResource OctoText}" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="16,9" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="MinHeight" Value="38" />
+      <Setter Property="CornerRadius" Value="5" />
+    </Style>
+
+    <Style Selector="Button:pointerover">
+      <Setter Property="Background" Value="#344656" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGold}" />
+    </Style>
+
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#C87C21" />
+      <Setter Property="Foreground" Value="#FFF8EC" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
+      <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+
+    <Style Selector="Button.primary:pointerover">
+      <Setter Property="Background" Value="#DE912E" />
+    </Style>
+
+    <Style Selector="Button.play:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#DE912E" />
+      <Setter Property="BorderBrush" Value="#E3A13A" />
+      <Setter Property="Foreground" Value="#FFF8EC" />
+    </Style>
+
+    <Style Selector="Button.play:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#824513" />
+      <Setter Property="BorderBrush" Value="#E3A13A" />
+      <Setter Property="Foreground" Value="#FFF8EC" />
+    </Style>
+
+    <Style Selector="Button.compact">
+      <Setter Property="Padding" Value="8,5" />
+      <Setter Property="MinHeight" Value="28" />
+      <Setter Property="FontSize" Value="8" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.danger:pointerover">
+      <Setter Property="Background" Value="#67302E" />
+      <Setter Property="BorderBrush" Value="#B85C4F" />
+    </Style>
+
+    <Style Selector="Border.sidebar">
+      <Setter Property="Background" Value="#F011161D" />
+      <Setter Property="BorderBrush" Value="#26313A" />
+      <Setter Property="BorderThickness" Value="0,0,1,0" />
+      <Setter Property="Padding" Value="18,24,18,20" />
+    </Style>
+
+    <Style Selector="Border.navItem">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="Padding" Value="0,11" />
+      <Setter Property="MinHeight" Value="42" />
+    </Style>
+
+    <Style Selector="Border.navItem.active">
+      <Setter Property="Background" Value="#B0242B33" />
+    </Style>
+
+    <Style Selector="Button.nav">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="Padding" Value="16,11" />
+      <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <Style Selector="Button.nav:pointerover">
+      <Setter Property="Background" Value="#9A202832" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Border.sourcePanel">
+      <Setter Property="Background" Value="#B8151C23" />
+      <Setter Property="BorderBrush" Value="#28343E" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="13" />
+      <Setter Property="BoxShadow" Value="0 8 24 0 #55000000" />
+    </Style>
+
+    <Style Selector="Border.contextPanel">
+      <Setter Property="Background" Value="#DB151B22" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Padding" Value="18,15" />
+      <Setter Property="BoxShadow" Value="0 8 26 0 #52000000" />
+    </Style>
+
+    <Style Selector="Border.statusPanel">
+      <Setter Property="Background" Value="#CE13212A" />
+      <Setter Property="BorderBrush" Value="#25404E" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="12,9" />
+      <Setter Property="BoxShadow" Value="0 5 18 0 #42000000" />
+    </Style>
+
+    <Style Selector="Border.updatePanel">
+      <Setter Property="Background" Value="#E32B2115" />
+      <Setter Property="BorderBrush" Value="#8F6024" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="12,9" />
+      <Setter Property="BoxShadow" Value="0 5 18 0 #42000000" />
+    </Style>
+
+    <Style Selector="Border.patchCard">
+      <Setter Property="Background" Value="{StaticResource OctoSurface}" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Padding" Value="16" />
+      <Setter Property="BoxShadow" Value="0 8 22 0 #5C000000" />
+    </Style>
+
+    <Style Selector="Border.patchCard:pointerover">
+      <Setter Property="BorderBrush" Value="#7B6439" />
+      <Setter Property="Background" Value="{StaticResource OctoSurfaceRaised}" />
+    </Style>
+
+    <Style Selector="Border.patchCard.enabled">
+      <Setter Property="BorderBrush" Value="#D98A2B" />
+    </Style>
+
+    <Style Selector="Border.patchCard.enabled:pointerover">
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
+    </Style>
+
+    <Style Selector="Border.statusBadge">
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="8,2" />
+      <Setter Property="MinHeight" Value="22" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TextBox, ComboBox">
+      <Setter Property="Background" Value="#E5161D25" />
+      <Setter Property="Foreground" Value="{StaticResource OctoText}" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="MinHeight" Value="38" />
+      <Setter Property="CornerRadius" Value="5" />
+    </Style>
+
+    <Style Selector="TextBox">
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Padding" Value="12,0" />
+    </Style>
+
+    <Style Selector="TextBox.sourceField">
+      <Setter Property="MinHeight" Value="32" />
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="Padding" Value="9,0" />
+    </Style>
+
+    <Style Selector="ToggleSwitch">
+      <Setter Property="Foreground" Value="{StaticResource OctoMuted}" />
+      <Setter Property="FontSize" Value="9" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style Selector="ToggleSwitch /template/ Border#OuterBorder">
+      <Setter Property="Background" Value="#27323B" />
+      <Setter Property="BorderBrush" Value="#65727D" />
+    </Style>
+
+    <Style Selector="ToggleSwitch:pointerover /template/ Border#OuterBorder">
+      <Setter Property="Background" Value="#34434E" />
+      <Setter Property="BorderBrush" Value="#8E9BA7" />
+    </Style>
+
+    <Style Selector="ToggleSwitch /template/ Ellipse#SwitchKnobOff">
+      <Setter Property="Fill" Value="#C5D0D7" />
+    </Style>
+
+    <Style Selector="ToggleSwitch:checked /template/ Border#SwitchKnobBounds">
+      <Setter Property="Background" Value="{StaticResource OctoGold}" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
+    </Style>
+
+    <Style Selector="ToggleSwitch:checked:pointerover /template/ Border#SwitchKnobBounds">
+      <Setter Property="Background" Value="#DE912E" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoHeadingBright}" />
+    </Style>
+
+    <Style Selector="ToggleSwitch:checked /template/ Ellipse#SwitchKnobOn">
+      <Setter Property="Fill" Value="#FFF8EC" />
+    </Style>
+
+    <Style Selector="TextBlock.muted">
+      <Setter Property="Foreground" Value="{StaticResource OctoMuted}" />
+    </Style>
+
+    <Style Selector="TextBlock.displayTitle">
+      <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{StaticResource OctoHeadingBright}" />
+      <Setter Property="LetterSpacing" Value="0.3" />
+    </Style>
+
+    <Style Selector="TextBlock.cardTitle">
+      <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
+      <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Foreground" Value="{StaticResource OctoHeading}" />
+      <Setter Property="LetterSpacing" Value="0.15" />
+    </Style>
+
+    <Style Selector="ProgressBar">
+      <Setter Property="Foreground" Value="{StaticResource OctoBlue}" />
+      <Setter Property="Background" Value="#25313A" />
+      <Setter Property="Height" Value="5" />
+    </Style>
+  </Application.Styles>
+</Application>

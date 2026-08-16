@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1400" height="360" viewBox="0 0 1400 360"
+     role="img" aria-labelledby="logo-title logo-description">
+  <title id="logo-title">OctoHD</title>
+  <desc id="logo-description">Goldenes OctoHD-Logo mit achteckigem, blau leuchtendem Kristallwappen.</desc>
+
+  <defs>
+    <linearGradient id="gold-face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff1a6"/>
+      <stop offset="0.24" stop-color="#f9ca55"/>
+      <stop offset="0.58" stop-color="#d88b1e"/>
+      <stop offset="0.82" stop-color="#f2b43c"/>
+      <stop offset="1" stop-color="#9e5410"/>
+    </linearGradient>
+    <linearGradient id="gold-edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff0a0"/>
+      <stop offset="0.4" stop-color="#d98d1d"/>
+      <stop offset="1" stop-color="#713208"/>
+    </linearGradient>
+    <linearGradient id="crest-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff3ad"/>
+      <stop offset="0.32" stop-color="#d99527"/>
+      <stop offset="0.68" stop-color="#7a3b0b"/>
+      <stop offset="1" stop-color="#e9ae3c"/>
+    </linearGradient>
+    <radialGradient id="crest-core" cx="48%" cy="42%" r="68%">
+      <stop offset="0" stop-color="#1d6f8d"/>
+      <stop offset="0.42" stop-color="#123d59"/>
+      <stop offset="0.78" stop-color="#0a1e31"/>
+      <stop offset="1" stop-color="#07111e"/>
+    </radialGradient>
+    <linearGradient id="hd-face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d8f8ff"/>
+      <stop offset="0.25" stop-color="#72d7f0"/>
+      <stop offset="0.62" stop-color="#238eb9"/>
+      <stop offset="1" stop-color="#135777"/>
+    </linearGradient>
+    <linearGradient id="crystal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e8fbff"/>
+      <stop offset="0.28" stop-color="#65d8f6"/>
+      <stop offset="0.65" stop-color="#187fa9"/>
+      <stop offset="1" stop-color="#0b3859"/>
+    </linearGradient>
+    <filter id="logo-shadow" x="-20%" y="-25%" width="150%" height="170%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/>
+      <feOffset dy="9" result="offset"/>
+      <feColorMatrix in="offset" type="matrix"
+        values="0 0 0 0 0.015  0 0 0 0 0.035  0 0 0 0 0.07  0 0 0 .85 0"/>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="blue-glow" x="-70%" y="-70%" width="240%" height="240%">
+      <feGaussianBlur stdDeviation="8" result="glow"/>
+      <feColorMatrix in="glow" type="matrix"
+        values="0 0 0 0 0.12  0 0 0 0 0.65  0 0 0 0 0.9  0 0 0 .8 0" result="blue"/>
+      <feMerge>
+        <feMergeNode in="blue"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Individuell gezeichnete, fontunabhängige Wortmarke. -->
+    <path id="octo-letters" fill-rule="evenodd" d="
+      M390 82H470L510 122V238L470 278H390L350 238V122L390 82Z
+      M410 129L396 145V215L410 231H450L464 215V145L450 129H410Z
+
+      M565 82H645L680 117L650 149L629 129H589L575 145V215L589 231H629L650 211L680 243L645 278H565L529 242V118L565 82Z
+
+      M696 82H813V132H781V278H728V132H696V82Z
+
+      M879 82H959L999 122V238L959 278H879L839 238V122L879 82Z
+      M899 129L885 145V215L899 231H939L953 215V145L939 129H899Z"/>
+
+    <path id="hd-letters" fill-rule="evenodd" d="
+      M1025 82H1077V154H1127V82H1179V278H1127V206H1077V278H1025V82Z
+
+      M1200 82H1277L1318 105L1344 145V215L1318 255L1277 278H1200V82Z
+      M1252 130V230H1265L1288 217L1298 201V159L1288 143L1265 130H1252Z"/>
+  </defs>
+
+  <!-- Achteckiges Zeichen: acht Facetten für "Octo", klarer Kristall für "HD". -->
+  <g filter="url(#logo-shadow)">
+    <path d="M165 25L226 50L279 101L303 180L279 259L226 310L165 335L104 310L51 259L27 180L51 101L104 50Z"
+          fill="#091422" stroke="#15283a" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M165 30L216 64L267 78L281 129L315 180L281 231L267 282L216 296L165 330L114 296L63 282L49 231L15 180L49 129L63 78L114 64Z"
+          fill="url(#crest-gold)" stroke="#522605" stroke-width="8" stroke-linejoin="round"/>
+    <path d="M165 59L210 83L247 98L262 135L286 180L262 225L247 262L210 277L165 301L120 277L83 262L68 225L44 180L68 135L83 98L120 83Z"
+          fill="url(#crest-core)" stroke="#f2bd50" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M165 75L204 94L236 109L251 141L270 180L251 219L236 251L204 266L165 285L126 266L94 251L79 219L60 180L79 141L94 109L126 94Z"
+          fill="none" stroke="#25566d" stroke-width="3" opacity=".8"/>
+
+    <!-- Acht eigenständige Lichtfacetten. -->
+    <g fill="#74ddf4" stroke="#082238" stroke-width="4" filter="url(#blue-glow)">
+      <path d="M165 72L177 91L165 110L153 91Z"/>
+      <path d="M228 98L232 120L210 116L207 103Z"/>
+      <path d="M255 168L274 180L255 192L243 180Z"/>
+      <path d="M228 262L207 257L210 244L232 240Z"/>
+      <path d="M165 250L177 269L165 288L153 269Z"/>
+      <path d="M102 262L98 240L120 244L123 257Z"/>
+      <path d="M75 168L87 180L75 192L56 180Z"/>
+      <path d="M102 98L123 103L120 116L98 120Z"/>
+    </g>
+
+    <!-- Geschliffener Kern, bewusst kein übernommenes Tier- oder Buchstabensignet. -->
+    <circle cx="165" cy="180" r="70" fill="#071523" stroke="#6d380b" stroke-width="16"/>
+    <circle cx="165" cy="180" r="65" fill="none" stroke="url(#gold-edge)" stroke-width="8"/>
+    <path d="M165 119L215 180L165 241L115 180Z"
+          fill="url(#crystal)" stroke="#a9efff" stroke-width="5" filter="url(#blue-glow)"/>
+    <path d="M165 119L165 241L139 180Z" fill="#e2faff" opacity=".2"/>
+    <path d="M165 119L191 180L165 241Z" fill="#072a48" opacity=".3"/>
+    <path d="M131 180H199" stroke="#dbf8ff" stroke-width="6" stroke-linecap="round" opacity=".88"/>
+    <circle cx="165" cy="180" r="9" fill="#fff7c9" stroke="#d18d25" stroke-width="4"/>
+  </g>
+
+  <!-- Dunkle Unterkante erzeugt Tiefe, ohne die OctoWow-Typografie nachzuzeichnen. -->
+  <g transform="translate(0 10)" opacity=".92">
+    <use xlink:href="#octo-letters" fill="#071321" stroke="#071321" stroke-width="24" stroke-linejoin="round"/>
+    <use xlink:href="#hd-letters" fill="#071321" stroke="#071321" stroke-width="24" stroke-linejoin="round"/>
+  </g>
+
+  <g filter="url(#logo-shadow)" stroke-linejoin="round">
+    <use xlink:href="#octo-letters" fill="url(#gold-face)" stroke="#5b2a07" stroke-width="20"/>
+    <use xlink:href="#octo-letters" fill="url(#gold-face)" stroke="url(#gold-edge)" stroke-width="10"/>
+    <use xlink:href="#octo-letters" fill="none" stroke="#fff3b0" stroke-width="2.5" opacity=".64" transform="translate(0 -2)"/>
+
+    <use xlink:href="#hd-letters" fill="url(#hd-face)" stroke="#0b2a40" stroke-width="20"/>
+    <use xlink:href="#hd-letters" fill="url(#hd-face)" stroke="#d99a31" stroke-width="9"/>
+    <use xlink:href="#hd-letters" fill="none" stroke="#e8fbff" stroke-width="2.5" opacity=".75" transform="translate(0 -2)"/>
+  </g>
+
+  <!-- Kleine Trennfacette verbindet Fantasy-Gold mit dem technischen HD-Akzent. -->
+  <path d="M1007 156L1018 180L1007 204L996 180Z"
+        fill="#89e2f5" stroke="#6e370a" stroke-width="4" filter="url(#blue-glow)"/>
+</svg>

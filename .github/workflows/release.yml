@@ -1,0 +1,190 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test release commit
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - run: dotnet restore OctoHD.slnx
+      - run: dotnet build OctoHD.slnx --configuration Release --no-restore -p:PublishAot=false
+      - run: dotnet test OctoHD.slnx --configuration Release --no-build -p:PublishAot=false
+      - run: dotnet format OctoHD.slnx --verify-no-changes --no-restore
+
+  windows:
+    name: Package Windows ${{ matrix.arch }}
+    needs: test
+    runs-on: windows-2025
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: win-x64
+            arch: x64
+          - runtime: win-arm64
+            arch: arm64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Validate release tag
+        shell: pwsh
+        run: |
+          if ('${{ github.ref_name }}' -notmatch '^v\d+\.\d+\.\d+([-.+][0-9A-Za-z.-]+)?$') {
+            throw 'Release tags must use semantic versioning, for example v1.0.0.'
+          }
+      - name: Publish Windows executable
+        shell: pwsh
+        run: |
+          $version = '${{ github.ref_name }}'.Substring(1)
+          ./scripts/publish.ps1 -Runtime '${{ matrix.runtime }}' -Version $version
+      - name: Verify and stage release asset
+        shell: pwsh
+        run: |
+          $source = '${{ github.workspace }}\releases\${{ matrix.runtime }}\OctoHD.exe'
+          $version = '${{ github.ref_name }}'.Substring(1)
+          $productVersion = (Get-Item -LiteralPath $source).VersionInfo.ProductVersion
+          if ($productVersion -ne $version) {
+            throw "Published version '$productVersion' does not match release tag '$version'."
+          }
+          $packageDirectory = '${{ github.workspace }}\releases\packages'
+          New-Item -ItemType Directory -Path $packageDirectory -Force | Out-Null
+          Copy-Item -LiteralPath $source -Destination "$packageDirectory\OctoHD-$version-windows-${{ matrix.arch }}.exe"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-windows-${{ matrix.arch }}
+          path: releases/packages/*.exe
+          if-no-files-found: error
+
+  linux:
+    name: Package Linux ${{ matrix.arch }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            runtime: linux-x64
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            runtime: linux-arm64
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Build AppImage
+        shell: bash
+        run: bash scripts/package-linux-appimage.sh '${{ matrix.runtime }}' "${GITHUB_REF_NAME#v}"
+      - name: Verify AppImage runtime
+        shell: bash
+        run: |
+          package="releases/packages/OctoHD-${GITHUB_REF_NAME#v}-linux-${{ matrix.arch }}.AppImage"
+          test -x "$package"
+          file "$package"
+          "$package" --appimage-offset >/dev/null
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-linux-${{ matrix.arch }}
+          path: releases/packages/*.AppImage
+          if-no-files-found: error
+
+  macos:
+    name: Package macOS ${{ matrix.arch }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15-intel
+            runtime: osx-x64
+            arch: x64
+          - runner: macos-15
+            runtime: osx-arm64
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    env:
+      OCTOHD_BUNDLE_ID: ${{ vars.OCTOHD_BUNDLE_ID }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Build app bundle
+        shell: bash
+        run: bash scripts/package-macos.sh '${{ matrix.runtime }}' "${GITHUB_REF_NAME#v}" '${{ github.run_number }}'
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-macos-${{ matrix.arch }}
+          path: releases/packages/*.zip
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    needs: [windows, linux, macos]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - name: Download platform packages
+        uses: actions/download-artifact@v7
+        with:
+          pattern: release-*
+          path: releases/packages
+          merge-multiple: true
+      - name: Validate package set and create checksums
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          expected=(
+            "OctoHD-$version-windows-x64.exe"
+            "OctoHD-$version-windows-arm64.exe"
+            "OctoHD-$version-linux-x64.AppImage"
+            "OctoHD-$version-linux-arm64.AppImage"
+            "OctoHD-$version-macos-x64.zip"
+            "OctoHD-$version-macos-arm64.zip"
+          )
+          for package in "${expected[@]}"; do
+            test -f "releases/packages/$package" || { echo "Missing $package" >&2; exit 1; }
+          done
+          cd releases/packages
+          printf '%s\0' "${expected[@]}" | xargs -0 sha256sum > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Attest release provenance
+        uses: actions/attest@v4
+        with:
+          subject-path: releases/packages/*
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          options=(--verify-tag --generate-notes --title "OctoHD $GITHUB_REF_NAME")
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            options+=(--prerelease)
+          else
+            options+=(--latest)
+          fi
+          gh release create "$GITHUB_REF_NAME" releases/packages/* "${options[@]}"

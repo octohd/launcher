@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
+    <AssemblyName>OctoHD</AssemblyName>
+    <Product>OctoHD Launcher</Product>
+    <Description>OctoWoW HD patch launcher</Description>
+    <Authors>OctoHD</Authors>
+    <Version>1.0.0</Version>
+    <OctoHDUpdateRepository Condition="'$(OctoHDUpdateRepository)' == ''"></OctoHDUpdateRepository>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <IsAotCompatible>true</IsAotCompatible>
+    <PublishAot>false</PublishAot>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <ApplicationIcon>Assets\Brand\OctoHD-Icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OctoHD.Core\OctoHD.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(OctoHDUpdateRepository)' != ''">
+    <AssemblyMetadata Include="OctoHDUpdateRepository" Value="$(OctoHDUpdateRepository)" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+</Project>
