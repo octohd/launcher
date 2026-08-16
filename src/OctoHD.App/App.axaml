@@ -27,6 +27,55 @@
     <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPointerOver">#FFFFFF</SolidColorBrush>
     <SolidColorBrush x:Key="ToggleSwitchKnobFillOnPressed">#FFE9BE</SolidColorBrush>
     <SolidColorBrush x:Key="ToggleSwitchKnobFillOnDisabled">#B9A98E</SolidColorBrush>
+
+    <!-- OctoHD ComboBox palette -->
+    <SolidColorBrush x:Key="ComboBoxBackground">#F0161D25</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver">#F0202932</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBackgroundPressed">#F02B251D</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBackgroundDisabled">#99161D25</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBackgroundUnfocused">#F0161D25</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushUnfocused">#2D3944</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBackgroundBorderBrushFocused">#FFC55E</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxForeground">#D5DEE4</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxForegroundFocused">#FFF0D2</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxForegroundFocusedPressed">#FFF8EC</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxForegroundDisabled">#667581</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderBrush">#354450</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver">#A66B2B</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderBrushPressed">#E3A13A</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxBorderBrushDisabled">#26313A</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground">#D39A43</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocused">#FFC55E</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundFocusedPressed">#FFF0D2</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxDropDownGlyphForegroundDisabled">#667581</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxDropDownBackground">#FB12181F</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush">#8C6531</SolidColorBrush>
+    <Thickness x:Key="ComboBoxDropdownBorderThickness">1</Thickness>
+    <Thickness x:Key="ComboBoxDropdownBorderPadding">3</Thickness>
+    <Thickness x:Key="ComboBoxDropdownContentMargin">0</Thickness>
+    <SolidColorBrush x:Key="ComboBoxItemForeground">#D5DEE4</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPointerOver">#FFF0D2</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundPressed">#FFF8EC</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelected">#FFE0A0</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPointerOver">#FFF0D2</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedPressed">#FFF8EC</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundDisabled">#667581</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemForegroundSelectedDisabled">#806F56</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackground">Transparent</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPointerOver">#E528333C</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundPressed">#F03A2B1B</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected">#E63A2B1B</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver">#F04A341C</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPressed">#F05B3B1A</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundDisabled">Transparent</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedDisabled">#663A2B1B</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushPointerOver">#4B5B67</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushPressed">#A66B2B</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelected">#E3A13A</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPointerOver">#FFC55E</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedPressed">#FFC55E</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushDisabled">Transparent</SolidColorBrush>
+    <SolidColorBrush x:Key="ComboBoxItemBorderBrushSelectedDisabled">#72512E</SolidColorBrush>
   </Application.Resources>
 
   <Application.Styles>
@@ -198,6 +247,70 @@
     <Style Selector="TextBox">
       <Setter Property="VerticalContentAlignment" Value="Center" />
       <Setter Property="Padding" Value="12,0" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect">
+      <Setter Property="FontFamily" Value="Inter" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="Padding" Value="11,0,0,0" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="MaxDropDownHeight" Value="320" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect.sourceSelect">
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="FontSize" Value="10" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect:pointerover /template/ Border#Background">
+      <Setter Property="Background" Value="#F0202932" />
+      <Setter Property="BorderBrush" Value="#A66B2B" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect:dropdownopen /template/ Border#Background">
+      <Setter Property="Background" Value="#F02B251D" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGold}" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect:focus-visible /template/ Border#HighlightBackground">
+      <Setter Property="Background" Value="#442E2114" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect /template/ PathIcon#DropDownGlyph">
+      <Setter Property="Foreground" Value="#D39A43" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect:pointerover /template/ PathIcon#DropDownGlyph">
+      <Setter Property="Foreground" Value="{StaticResource OctoGoldBright}" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect:dropdownopen /template/ PathIcon#DropDownGlyph">
+      <Setter Property="Foreground" Value="{StaticResource OctoHeadingBright}" />
+    </Style>
+
+    <Style Selector="ComboBox.octoSelect:dropdownopen /template/ Border#PopupBorder">
+      <Setter Property="Background" Value="#FB12181F" />
+      <Setter Property="BorderBrush" Value="#8C6531" />
+      <Setter Property="BoxShadow" Value="0 12 30 0 #A0000000" />
+    </Style>
+
+    <Style Selector="ComboBoxItem">
+      <Setter Property="FontFamily" Value="Inter" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="10,7" />
+      <Setter Property="Margin" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="ComboBoxItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="BorderThickness" Value="2,0,0,0" />
     </Style>
 
     <Style Selector="TextBox.sourceField">

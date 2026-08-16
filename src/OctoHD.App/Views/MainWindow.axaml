@@ -58,7 +58,8 @@
           <StackPanel Spacing="7">
             <TextBlock Text="PATCH SOURCE" FontSize="9" FontWeight="Bold"
                        LetterSpacing="1.1" Foreground="#667581" />
-            <ComboBox ItemsSource="{Binding PatchSources}"
+            <ComboBox Classes="octoSelect sourceSelect"
+                      ItemsSource="{Binding PatchSources}"
                       SelectedItem="{Binding SelectedPatchSource}"
                       SelectionChanged="PatchSource_OnSelectionChanged"
                       MinHeight="34">
@@ -178,7 +179,8 @@
           <TextBlock Text="{Binding SummaryText}" FontSize="11" Classes="muted" />
         </StackPanel>
         <TextBox Grid.Column="1" Text="{Binding SearchText}" PlaceholderText="Search patches" />
-        <ComboBox Grid.Column="2" ItemsSource="{Binding FilterOptions}"
+        <ComboBox Grid.Column="2" Classes="octoSelect filterSelect"
+                  ItemsSource="{Binding FilterOptions}"
                   SelectedItem="{Binding SelectedFilter}" />
         <Button Grid.Column="3" Content="UPDATE ALL" Command="{Binding UpdateAllCommand}" />
       </Grid>
