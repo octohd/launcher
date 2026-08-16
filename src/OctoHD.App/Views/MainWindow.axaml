@@ -54,47 +54,53 @@
           </Button>
         </StackPanel>
 
-        <Border Grid.Row="3" Classes="sourcePanel">
-          <StackPanel Spacing="7">
-            <TextBlock Text="PATCH SOURCE" FontSize="9" FontWeight="Bold"
-                       LetterSpacing="1.1" Foreground="#667581" />
-            <ComboBox Classes="octoSelect sourceSelect"
-                      ItemsSource="{Binding PatchSources}"
-                      SelectedItem="{Binding SelectedPatchSource}"
-                      SelectionChanged="PatchSource_OnSelectionChanged"
-                      MinHeight="34">
-              <ComboBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:PatchSourceItemViewModel">
-                  <TextBlock Text="{Binding DisplayName}" FontSize="11" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBlock Text="{Binding PatchSourceDetail}" FontSize="9" TextWrapping="Wrap"
-                       Foreground="{StaticResource OctoMuted}" />
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
-              <Button Classes="compact" Content="+ ADD SOURCE"
-                      Command="{Binding BeginAddPatchSourceCommand}" />
-              <Button Grid.Column="1" Classes="compact danger" Content="REMOVE"
-                      Command="{Binding RemovePatchSourceCommand}"
-                      IsVisible="{Binding CanRemovePatchSource}" />
-            </Grid>
-            <StackPanel Spacing="6" IsVisible="{Binding IsAddingPatchSource}">
-              <TextBox Classes="sourceField" Text="{Binding NewPatchSourceName}"
-                       PlaceholderText="Source name" />
-              <TextBox Classes="sourceField" Text="{Binding NewPatchSourceUrl}"
-                       PlaceholderText="https://bucket.example/patches/" />
-              <TextBlock Text="{Binding PatchSourceError}"
-                         IsVisible="{Binding HasPatchSourceError}"
-                         FontSize="9" TextWrapping="Wrap" Foreground="#F28B79" />
-              <Grid ColumnDefinitions="*,*" ColumnSpacing="6">
-                <Button Classes="compact primary" Content="SAVE"
-                        Command="{Binding SavePatchSourceCommand}" />
-                <Button Grid.Column="1" Classes="compact" Content="CANCEL"
-                        Command="{Binding CancelAddPatchSourceCommand}" />
+        <StackPanel Grid.Row="3" Spacing="10">
+          <Border Classes="sourcePanel">
+            <StackPanel Spacing="7">
+              <TextBlock Text="PATCH SOURCE" FontSize="9" FontWeight="Bold"
+                         LetterSpacing="1.1" Foreground="#667581" />
+              <ComboBox Classes="octoSelect sourceSelect"
+                        ItemsSource="{Binding PatchSources}"
+                        SelectedItem="{Binding SelectedPatchSource}"
+                        SelectionChanged="PatchSource_OnSelectionChanged"
+                        MinHeight="34">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate x:DataType="vm:PatchSourceItemViewModel">
+                    <TextBlock Text="{Binding DisplayName}" FontSize="11" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <TextBlock Text="{Binding PatchSourceDetail}" FontSize="9" TextWrapping="Wrap"
+                         Foreground="{StaticResource OctoMuted}" />
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6">
+                <Button Classes="compact" Content="+ ADD SOURCE"
+                        Command="{Binding BeginAddPatchSourceCommand}" />
+                <Button Grid.Column="1" Classes="compact danger" Content="REMOVE"
+                        Command="{Binding RemovePatchSourceCommand}"
+                        IsVisible="{Binding CanRemovePatchSource}" />
               </Grid>
+              <StackPanel Spacing="6" IsVisible="{Binding IsAddingPatchSource}">
+                <TextBox Classes="sourceField" Text="{Binding NewPatchSourceName}"
+                         PlaceholderText="Source name" />
+                <TextBox Classes="sourceField" Text="{Binding NewPatchSourceUrl}"
+                         PlaceholderText="https://bucket.example/patches/" />
+                <TextBlock Text="{Binding PatchSourceError}"
+                           IsVisible="{Binding HasPatchSourceError}"
+                           FontSize="9" TextWrapping="Wrap" Foreground="#F28B79" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="6">
+                  <Button Classes="compact primary save" Content="SAVE"
+                          Command="{Binding SavePatchSourceCommand}" />
+                  <Button Grid.Column="1" Classes="compact" Content="CANCEL"
+                          Command="{Binding CancelAddPatchSourceCommand}" />
+                </Grid>
+              </StackPanel>
             </StackPanel>
-          </StackPanel>
-        </Border>
+          </Border>
+          <TextBlock Text="{Binding AppVersionText}"
+                     HorizontalAlignment="Center"
+                     FontSize="8" FontWeight="SemiBold" LetterSpacing="1"
+                     Foreground="#667581" />
+        </StackPanel>
       </Grid>
         </Border>
       </Grid>

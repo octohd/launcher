@@ -86,6 +86,8 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public IReadOnlyList<string> FilterOptions { get; } = ["All patches", "Installed", "Not installed", "Updates"];
 
+    public string AppVersionText => $"OCTOHD  v{_selfUpdateService.CurrentVersion}";
+
     public AsyncRelayCommand RefreshCommand { get; }
 
     public AsyncRelayCommand UpdateAllCommand { get; }

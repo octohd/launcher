@@ -126,6 +126,18 @@
       <Setter Property="Foreground" Value="#FFF8EC" />
     </Style>
 
+    <Style Selector="Button.save:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#DE912E" />
+      <Setter Property="BorderBrush" Value="#E3A13A" />
+      <Setter Property="Foreground" Value="#FFF8EC" />
+    </Style>
+
+    <Style Selector="Button.save:pressed /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#824513" />
+      <Setter Property="BorderBrush" Value="#E3A13A" />
+      <Setter Property="Foreground" Value="#FFF8EC" />
+    </Style>
+
     <Style Selector="Button.compact">
       <Setter Property="Padding" Value="8,5" />
       <Setter Property="MinHeight" Value="28" />
@@ -247,6 +259,21 @@
     <Style Selector="TextBox">
       <Setter Property="VerticalContentAlignment" Value="Center" />
       <Setter Property="Padding" Value="12,0" />
+      <Setter Property="CaretBrush" Value="{StaticResource OctoGoldBright}" />
+      <Setter Property="SelectionBrush" Value="#9A704318" />
+      <Setter Property="SelectionForegroundBrush" Value="#FFF8EC" />
+    </Style>
+
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#F01A222B" />
+      <Setter Property="BorderBrush" Value="#8C6531" />
+    </Style>
+
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#F01D252E" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoGold}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="BoxShadow" Value="0 0 0 1 #55E3A13A" />
     </Style>
 
     <Style Selector="ComboBox.octoSelect">
