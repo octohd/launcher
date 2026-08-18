@@ -58,10 +58,9 @@ jobs:
         if: failure()
         shell: pwsh
         run: |
-          $details = (Get-Content make-check.log -Tail 60 | Out-String) `
-            .Replace('%', '%25') `
-            .Replace("`r", '%0D') `
-            .Replace("`n", '%0A')
+          $details = Get-Content make-check.log -Tail 60 | Out-String
+          $details = $details.Replace('%', '%25')
+          $details = $details.Replace("`r", '%0D').Replace("`n", '%0A')
           Write-Output "::error title=make check failed::$details"
       - run: make coverage
       - name: Add coverage to job summary
