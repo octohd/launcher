@@ -15,7 +15,7 @@ jobs:
     name: Lint workflows and scripts
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install actionlint
         shell: bash
         run: |
@@ -45,7 +45,7 @@ jobs:
     name: Test, format, and coverage
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           global-json-file: global.json
@@ -84,7 +84,7 @@ jobs:
             runtime: osx-arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           global-json-file: global.json
