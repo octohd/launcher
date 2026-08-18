@@ -11,22 +11,61 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    name: Test and format
+  lint:
+    name: Lint workflows and scripts
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Install actionlint
+        shell: bash
+        run: |
+          version=1.7.12
+          archive="actionlint_${version}_linux_amd64.tar.gz"
+          checksums="actionlint_${version}_checksums.txt"
+          curl --fail --location --silent --show-error \
+            --output "$archive" \
+            "https://github.com/rhysd/actionlint/releases/download/v${version}/${archive}"
+          curl --fail --location --silent --show-error \
+            --output "$checksums" \
+            "https://github.com/rhysd/actionlint/releases/download/v${version}/${checksums}"
+          grep " ${archive}$" "$checksums" | sha256sum --check
+          tar --extract --gzip --file "$archive" actionlint
+      - name: Lint GitHub Actions workflows
+        run: ./actionlint -color
+      - name: Lint shell scripts
+        run: shellcheck scripts/*.sh
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: Install-Module PSScriptAnalyzer -Scope CurrentUser -RequiredVersion 1.25.0 -Force
+      - name: Lint PowerShell scripts
+        shell: pwsh
+        run: ./scripts/lint-powershell.ps1
+
+  test:
+    name: Test, format, and coverage
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           global-json-file: global.json
-      - run: dotnet restore OctoHD.slnx
-      - run: dotnet build OctoHD.slnx --configuration Release --no-restore -p:PublishAot=false
-      - run: dotnet test OctoHD.slnx --configuration Release --no-build -p:PublishAot=false
-      - run: dotnet format OctoHD.slnx --verify-no-changes --no-restore
+      - run: make check
+      - run: make coverage
+      - name: Add coverage to job summary
+        if: always()
+        shell: bash
+        run: test ! -f coverage/report/SummaryGithub.md || cat coverage/report/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          if-no-files-found: error
+          retention-days: 14
 
   publish:
     name: Build ${{ matrix.runtime }}
-    needs: test
+    needs: [lint, test]
     strategy:
       fail-fast: false
       matrix:
@@ -45,14 +84,14 @@ jobs:
             runtime: osx-arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           global-json-file: global.json
       - name: Publish self-contained smoke build
         shell: pwsh
         run: ./scripts/publish.ps1 -Runtime '${{ matrix.runtime }}'
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: OctoHD-smoke-${{ matrix.runtime }}
           path: releases/${{ matrix.runtime }}/

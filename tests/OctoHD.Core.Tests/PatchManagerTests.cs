@@ -15,7 +15,10 @@ public sealed class PatchManagerTests
         using var httpClient = new HttpClient(handler);
         var manager = CreateManager(new TestCatalog(patch), httpClient);
 
-        var results = await manager.InstallAsync(folder.DataPath, patch);
+        var results = await manager.InstallAsync(
+            folder.DataPath,
+            patch,
+            cancellationToken: TestContext.Current.CancellationToken);
 
         Assert.True(File.Exists(Path.Combine(folder.DataPath, "patch-B.mpq")));
         Assert.False(File.Exists(Path.Combine(folder.DataPath, "patch-A.mpq")));
@@ -31,10 +34,21 @@ public sealed class PatchManagerTests
         var handler = new StaticResponseHandler(TestPatches.MpqBytes());
         using var httpClient = new HttpClient(handler);
         var manager = CreateManager(new TestCatalog(patch), httpClient);
-        await manager.InstallAsync(folder.DataPath, patch);
+        await manager.InstallAsync(
+            folder.DataPath,
+            patch,
+            cancellationToken: TestContext.Current.CancellationToken);
 
-        var disabled = await manager.SetEnabledAsync(folder.DataPath, patch, false);
-        var enabled = await manager.SetEnabledAsync(folder.DataPath, patch, true);
+        var disabled = await manager.SetEnabledAsync(
+            folder.DataPath,
+            patch,
+            false,
+            TestContext.Current.CancellationToken);
+        var enabled = await manager.SetEnabledAsync(
+            folder.DataPath,
+            patch,
+            true,
+            TestContext.Current.CancellationToken);
 
         Assert.Equal(PatchStatus.Disabled, Assert.Single(disabled).Status);
         Assert.Equal(PatchStatus.Active, Assert.Single(enabled).Status);
@@ -55,7 +69,10 @@ public sealed class PatchManagerTests
         var manager = CreateManager(catalog, httpClient);
 
         var exception = await Assert.ThrowsAsync<PatchOperationException>(() =>
-            manager.InstallAsync(folder.DataPath, dependent));
+            manager.InstallAsync(
+                folder.DataPath,
+                dependent,
+                cancellationToken: TestContext.Current.CancellationToken));
 
         Assert.Contains("Enable required patches first", exception.Message);
         Assert.Equal(0, handler.RequestCount);
@@ -75,8 +92,14 @@ public sealed class PatchManagerTests
             "Test bucket",
             new Uri("https://bucket.example/hd/"));
 
-        var results = await manager.InstallAsync(folder.DataPath, patch, source: source);
-        var state = await new JsonPatchStateStore().LoadAsync(folder.DataPath);
+        var results = await manager.InstallAsync(
+            folder.DataPath,
+            patch,
+            source: source,
+            cancellationToken: TestContext.Current.CancellationToken);
+        var state = await new JsonPatchStateStore().LoadAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken);
 
         Assert.Equal(new Uri("https://bucket.example/hd/patch-A.mpq"), handler.LastRequestUri);
         Assert.Equal("custom-test", state.Patches[patch.Id].DownloadSourceId);

@@ -4,11 +4,20 @@ BASH ?= bash
 
 SOLUTION := OctoHD.slnx
 APP_PROJECT := src/OctoHD.App/OctoHD.App.csproj
+CORE_TEST_PROJECT := tests/OctoHD.Core.Tests/OctoHD.Core.Tests.csproj
+APP_TEST_PROJECT := tests/OctoHD.App.Tests/OctoHD.App.Tests.csproj
 PUBLISH_SCRIPT := scripts/publish.ps1
+XAML_FORMAT_SCRIPT := scripts/format-xaml.ps1
+SHELL_SCRIPTS := scripts/package-linux-appimage.sh scripts/package-macos.sh
+
+ACTIONLINT ?= actionlint
+SHELLCHECK ?= shellcheck
 
 CONFIGURATION ?= Release
 DEV_CONFIGURATION ?= Debug
-VERSION ?= 1.0.3
+LINE_COVERAGE_MIN ?= 60
+BRANCH_COVERAGE_MIN ?= 45
+VERSION ?= 1.0.4
 BUILD_NUMBER ?= 1
 UPDATE_REPOSITORY ?=
 RUNTIME ?=
@@ -21,7 +30,8 @@ endif
 .DEFAULT_GOAL := help
 
 .PHONY: \
-	help restore build build-debug test format format-check check ci dev dev-watch run clean \
+	help tools restore build build-debug test coverage format format-check format-xaml format-xaml-check \
+	lint lint-workflows lint-shell lint-powershell check ci dev dev-watch run clean \
 	build-all build-windows build-linux build-macos \
 	build-win-x64 build-win-arm64 build-linux-x64 build-linux-arm64 build-osx-x64 build-osx-arm64 \
 	publish-all publish-windows publish-linux publish-macos publish-native \
@@ -38,8 +48,10 @@ help:
 	@echo   make build               Build the solution
 	@echo   make build-debug         Build the solution in Debug mode
 	@echo   make test                Run all tests
-	@echo   make format              Apply dotnet formatting
-	@echo   make format-check        Verify formatting without changes
+	@echo   make coverage            Generate Cobertura and HTML coverage reports
+	@echo   make format              Apply C# and AXAML formatting
+	@echo   make format-check        Verify C# and AXAML formatting without changes
+	@echo   make lint                Lint workflows, shell scripts, and PowerShell scripts
 	@echo   make check               Run the same restore/build/test/format checks as CI
 	@echo   make clean               Clean the selected configuration
 	@echo Self-contained single-file builds:
@@ -58,7 +70,10 @@ help:
 	@echo   VERSION=0.2.0 CONFIGURATION=Release UPDATE_REPOSITORY=owner/OctoHD
 	@echo   BUILD_NUMBER=42 POWERSHELL=pwsh BASH=bash
 
-restore:
+tools:
+	$(DOTNET) tool restore
+
+restore: tools
 	$(DOTNET) restore $(SOLUTION)
 
 build:
@@ -70,17 +85,46 @@ build-debug:
 test:
 	$(DOTNET) test $(SOLUTION) --configuration $(CONFIGURATION)
 
-format:
+coverage: tools
+	$(POWERSHELL) -NoLogo -NoProfile -Command "if (Test-Path -LiteralPath '$(CURDIR)/coverage') { Remove-Item -LiteralPath '$(CURDIR)/coverage' -Recurse -Force }"
+	$(DOTNET) restore $(SOLUTION) --locked-mode
+	$(DOTNET) build $(SOLUTION) --configuration $(CONFIGURATION) --no-restore -p:PublishAot=false
+	$(DOTNET) test $(CORE_TEST_PROJECT) --configuration $(CONFIGURATION) --no-build -p:PublishAot=false -- --results-directory "$(CURDIR)/coverage" --coverlet --coverlet-file-prefix core --coverlet-output-format cobertura
+	$(DOTNET) test $(APP_TEST_PROJECT) --configuration $(CONFIGURATION) --no-build -p:PublishAot=false -- --results-directory "$(CURDIR)/coverage" --coverlet --coverlet-file-prefix app --coverlet-output-format cobertura
+	$(DOTNET) tool run reportgenerator --allow-roll-forward -- -reports:"coverage/*.coverage.cobertura.*.xml" -targetdir:"coverage/report" -reporttypes:"Html;Cobertura;MarkdownSummaryGithub"
+	$(POWERSHELL) -NoLogo -NoProfile -File scripts/check-coverage.ps1 -LineThreshold $(LINE_COVERAGE_MIN) -BranchThreshold $(BRANCH_COVERAGE_MIN)
+
+format: tools
 	$(DOTNET) format $(SOLUTION)
+	$(POWERSHELL) -NoLogo -NoProfile -File $(XAML_FORMAT_SCRIPT)
 
-format-check:
+format-check: tools
 	$(DOTNET) format $(SOLUTION) --verify-no-changes
+	$(POWERSHELL) -NoLogo -NoProfile -File $(XAML_FORMAT_SCRIPT) -Check
 
-check ci:
-	$(DOTNET) restore $(SOLUTION)
+format-xaml: tools
+	$(POWERSHELL) -NoLogo -NoProfile -File $(XAML_FORMAT_SCRIPT)
+
+format-xaml-check: tools
+	$(POWERSHELL) -NoLogo -NoProfile -File $(XAML_FORMAT_SCRIPT) -Check
+
+lint: lint-workflows lint-shell lint-powershell
+
+lint-workflows:
+	$(ACTIONLINT)
+
+lint-shell:
+	$(SHELLCHECK) $(SHELL_SCRIPTS)
+
+lint-powershell:
+	$(POWERSHELL) -NoLogo -NoProfile -File scripts/lint-powershell.ps1
+
+check ci: tools
+	$(DOTNET) restore $(SOLUTION) --locked-mode
 	$(DOTNET) build $(SOLUTION) --configuration Release --no-restore -p:PublishAot=false
 	$(DOTNET) test $(SOLUTION) --configuration Release --no-build -p:PublishAot=false
 	$(DOTNET) format $(SOLUTION) --verify-no-changes --no-restore
+	$(POWERSHELL) -NoLogo -NoProfile -File $(XAML_FORMAT_SCRIPT) -Check
 
 dev run:
 	$(DOTNET) run --project $(APP_PROJECT) --configuration $(DEV_CONFIGURATION)

@@ -1,33 +1,26 @@
-<Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="OctoHD.App.App"
-             RequestedThemeVariant="Dark">
+<Application xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="OctoHD.App.App" RequestedThemeVariant="Dark">
   <Application.Resources>
     <FontFamily x:Key="OctoDisplayFont">avares://OctoHD/Assets/Fonts#Cinzel Decorative</FontFamily>
-    <LinearGradientBrush x:Key="OctoFantasyTextGradient"
-                         StartPoint="0%,0%" EndPoint="0%,100%">
+    <LinearGradientBrush x:Key="OctoFantasyTextGradient" StartPoint="0%,0%" EndPoint="0%,100%">
       <GradientStop Color="#FFF8D5" Offset="0" />
       <GradientStop Color="#FFD77A" Offset="0.42" />
       <GradientStop Color="#B96A1F" Offset="1" />
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="OctoFantasyButtonTextGradient"
-                         StartPoint="0%,0%" EndPoint="0%,100%">
+    <LinearGradientBrush x:Key="OctoFantasyButtonTextGradient" StartPoint="0%,0%" EndPoint="0%,100%">
       <GradientStop Color="#FFFFFF" Offset="0" />
       <GradientStop Color="#FFF9ED" Offset="0.48" />
       <GradientStop Color="#FFEAC7" Offset="1" />
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="OctoPrimaryButtonGradient"
-                         StartPoint="0%,0%" EndPoint="0%,100%">
+    <LinearGradientBrush x:Key="OctoPrimaryButtonGradient" StartPoint="0%,0%" EndPoint="0%,100%">
       <GradientStop Color="#E09A35" Offset="0" />
       <GradientStop Color="#B96818" Offset="1" />
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="OctoPrimaryButtonHoverGradient"
-                         StartPoint="0%,0%" EndPoint="0%,100%">
+    <LinearGradientBrush x:Key="OctoPrimaryButtonHoverGradient" StartPoint="0%,0%" EndPoint="0%,100%">
       <GradientStop Color="#F4B24C" Offset="0" />
       <GradientStop Color="#CD7922" Offset="1" />
     </LinearGradientBrush>
-    <LinearGradientBrush x:Key="OctoNavActiveGradient"
-                         StartPoint="0%,0%" EndPoint="100%,0%">
+    <LinearGradientBrush x:Key="OctoNavActiveGradient" StartPoint="0%,0%" EndPoint="100%,0%">
       <GradientStop Color="#D12A3139" Offset="0" />
       <GradientStop Color="#7820272F" Offset="1" />
     </LinearGradientBrush>
@@ -145,7 +138,8 @@
     <Style Selector="Button.primary /template/ ContentPresenter#PART_ContentPresenter">
       <Setter Property="Foreground" Value="{StaticResource OctoFantasyButtonTextGradient}" />
       <Setter Property="Effect">
-        <DropShadowEffect Color="#F0000000" BlurRadius="1" OffsetX="0" OffsetY="1.5" />
+        <DropShadowEffect Color="#F0000000" BlurRadius="1" OffsetX="0"
+                          OffsetY="1.5" />
       </Setter>
     </Style>
 
@@ -478,7 +472,8 @@
       <Setter Property="Foreground" Value="{StaticResource OctoFantasyTextGradient}" />
       <Setter Property="LetterSpacing" Value="0.3" />
       <Setter Property="Effect">
-        <DropShadowEffect Color="#E0000000" BlurRadius="1.5" OffsetX="0" OffsetY="2" />
+        <DropShadowEffect Color="#E0000000" BlurRadius="1.5" OffsetX="0"
+                          OffsetY="2" />
       </Setter>
     </Style>
 
@@ -488,7 +483,8 @@
       <Setter Property="Foreground" Value="{StaticResource OctoFantasyTextGradient}" />
       <Setter Property="LetterSpacing" Value="0.15" />
       <Setter Property="Effect">
-        <DropShadowEffect Color="#E0000000" BlurRadius="1.5" OffsetX="0" OffsetY="2" />
+        <DropShadowEffect Color="#E0000000" BlurRadius="1.5" OffsetX="0"
+                          OffsetY="2" />
       </Setter>
     </Style>
 

@@ -9,7 +9,9 @@ public sealed class DataFolderValidatorTests
     {
         using var folder = new TemporaryDataFolder();
 
-        var result = await new DataFolderValidator().ValidateAsync(folder.DataPath);
+        var result = await new DataFolderValidator().ValidateAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken);
 
         Assert.True(result.IsValid);
         Assert.Equal(Path.GetFullPath(folder.DataPath), result.NormalizedPath);
@@ -22,7 +24,9 @@ public sealed class DataFolderValidatorTests
         Directory.CreateDirectory(path);
         try
         {
-            var result = await new DataFolderValidator().ValidateAsync(path);
+            var result = await new DataFolderValidator().ValidateAsync(
+                path,
+                TestContext.Current.CancellationToken);
             Assert.False(result.IsValid);
         }
         finally
@@ -37,7 +41,9 @@ public sealed class DataFolderValidatorTests
         using var folder = new TemporaryDataFolder();
         var installationPath = Directory.GetParent(folder.DataPath)!.FullName;
 
-        var result = await new DataFolderValidator().ValidateAsync(installationPath);
+        var result = await new DataFolderValidator().ValidateAsync(
+            installationPath,
+            TestContext.Current.CancellationToken);
 
         Assert.True(result.IsValid);
         Assert.Equal(Path.GetFullPath(folder.DataPath), result.NormalizedPath);

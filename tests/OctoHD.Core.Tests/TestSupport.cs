@@ -20,10 +20,7 @@ internal sealed class TemporaryDataFolder : IDisposable
 
     public void WriteMpq(string fileName, int length = 8)
     {
-        if (length < 4)
-        {
-            throw new ArgumentOutOfRangeException(nameof(length));
-        }
+        ArgumentOutOfRangeException.ThrowIfLessThan(length, 4);
 
         var content = new byte[length];
         content[0] = (byte)'M';

@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
 
@@ -88,7 +89,7 @@ public static class SelfUpdateBootstrapper
                 WorkingDirectory = UpdatesDirectory
             };
             startInfo.ArgumentList.Add(ApplyArgument);
-            startInfo.ArgumentList.Add(Environment.ProcessId.ToString());
+            startInfo.ArgumentList.Add(Environment.ProcessId.ToString(CultureInfo.InvariantCulture));
             startInfo.ArgumentList.Add(PendingPath);
             startInfo.ArgumentList.Add(pending.TargetPath);
             _ = Process.Start(startInfo)

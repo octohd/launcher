@@ -7,10 +7,12 @@
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Avalonia.Headless.XUnit" Version="12.1.1" />
     <PackageReference Include="coverlet.MTP" Version="10.0.1" PrivateAssets="all" />
+    <!-- 4.x currently breaks discovery through Avalonia.Headless.XUnit 12.1.1. -->
     <PackageReference Include="xunit.v3.mtp-v2" Version="3.2.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\OctoHD.Core\OctoHD.Core.csproj" />
+    <ProjectReference Include="..\..\src\OctoHD.App\OctoHD.App.csproj" />
   </ItemGroup>
 </Project>

@@ -13,7 +13,9 @@ public sealed class PatchScannerTests
         var patch = TestPatches.Create();
         var scanner = CreateScanner(patch);
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(PatchStatus.NotInstalled, result.Status);
     }
@@ -28,7 +30,9 @@ public sealed class PatchScannerTests
         var patch = TestPatches.Create();
         var scanner = CreateScanner(patch);
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(expected, result.Status);
         Assert.Contains("file fingerprint", result.Message);
@@ -42,7 +46,9 @@ public sealed class PatchScannerTests
         folder.WriteMpq("__octohd_patch-B.mpq");
         var scanner = CreateScanner(TestPatches.Create());
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(PatchStatus.Conflict, result.Status);
     }
@@ -54,7 +60,9 @@ public sealed class PatchScannerTests
         folder.WriteMpq("patch-B.mpq", 12);
         var scanner = CreateScanner(TestPatches.Create());
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(PatchStatus.ForeignFile, result.Status);
     }
@@ -77,10 +85,15 @@ public sealed class PatchScannerTests
             "\"old\"",
             DateTimeOffset.UtcNow,
             DateTimeOffset.UtcNow);
-        await stateStore.SaveAsync(folder.DataPath, state);
+        await stateStore.SaveAsync(
+            folder.DataPath,
+            state,
+            TestContext.Current.CancellationToken);
         var scanner = new PatchScanner(new TestCatalog(patch), stateStore);
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(PatchStatus.UpdateAvailableActive, result.Status);
     }
@@ -94,7 +107,9 @@ public sealed class PatchScannerTests
         var stateStore = new JsonPatchStateStore();
         var hashService = new FileHashService();
         var patchPath = Path.Combine(folder.DataPath, "patch-B.mpq");
-        var originalHash = await hashService.ComputeSha256Async(patchPath);
+        var originalHash = await hashService.ComputeSha256Async(
+            patchPath,
+            TestContext.Current.CancellationToken);
         var state = new LocalStateDocument();
         state.Patches[patch.Id] = new InstalledPatchRecord(
             patch.Id,
@@ -106,13 +121,21 @@ public sealed class PatchScannerTests
             patch.ETag,
             DateTimeOffset.UtcNow.AddDays(-1),
             DateTimeOffset.UtcNow.AddDays(-1));
-        await stateStore.SaveAsync(folder.DataPath, state);
+        await stateStore.SaveAsync(
+            folder.DataPath,
+            state,
+            TestContext.Current.CancellationToken);
         var changed = TestPatches.MpqBytes();
         changed[^1] = 0x7F;
-        await File.WriteAllBytesAsync(patchPath, changed);
+        await File.WriteAllBytesAsync(
+            patchPath,
+            changed,
+            TestContext.Current.CancellationToken);
         var scanner = new PatchScanner(new TestCatalog(patch), stateStore, hashService);
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(PatchStatus.Corrupt, result.Status);
     }
@@ -135,10 +158,15 @@ public sealed class PatchScannerTests
             patch.ETag,
             DateTimeOffset.UtcNow.AddDays(-1),
             DateTimeOffset.UtcNow.AddDays(-1));
-        await stateStore.SaveAsync(folder.DataPath, state);
+        await stateStore.SaveAsync(
+            folder.DataPath,
+            state,
+            TestContext.Current.CancellationToken);
         var scanner = new PatchScanner(new TestCatalog(patch), stateStore);
 
-        var result = Assert.Single(await scanner.ScanAsync(folder.DataPath));
+        var result = Assert.Single(await scanner.ScanAsync(
+            folder.DataPath,
+            TestContext.Current.CancellationToken));
 
         Assert.Equal(PatchStatus.Corrupt, result.Status);
     }

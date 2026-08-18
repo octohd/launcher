@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# ShellCheck cannot infer that status is assigned before it is expanded by the trap.
+# shellcheck disable=SC2154
 trap 'status=$?; echo "::error file=scripts/package-macos.sh,line=${LINENO}::Command failed with exit ${status}: ${BASH_COMMAND}"; exit "${status}"' ERR
 
 runtime="${1:-}"
@@ -133,6 +135,12 @@ cat > "$entitlements_path" <<'ENTITLEMENTS'
 <dict>
   <key>com.apple.security.cs.allow-jit</key>
   <true/>
+  <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+  <true/>
+  <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+  <true/>
+  <key>com.apple.security.cs.disable-library-validation</key>
+  <true/>
 </dict>
 </plist>
 ENTITLEMENTS
@@ -147,6 +155,27 @@ codesign --force --options runtime \
   --sign - \
   "$app_path"
 codesign --verify --deep --strict --verbose=2 "$app_path"
+
+smoke_home="$staging_dir/smoke-home"
+smoke_log="$staging_dir/smoke.log"
+mkdir -p -- "$smoke_home"
+HOME="$smoke_home" "$macos_path/OctoHD" >"$smoke_log" 2>&1 &
+smoke_pid=$!
+for _ in {1..10}; do
+  sleep 1
+  if ! kill -0 "$smoke_pid" 2>/dev/null; then
+    set +e
+    wait "$smoke_pid"
+    smoke_status=$?
+    set -e
+    cat "$smoke_log" >&2
+    echo "The signed macOS app exited during its startup smoke test with status $smoke_status." >&2
+    exit 1
+  fi
+done
+kill "$smoke_pid"
+wait "$smoke_pid" 2>/dev/null || true
+echo "Signed macOS app remained running for the 10-second startup smoke test."
 
 rm -f -- "$output_path"
 ditto -c -k --sequesterRsrc --keepParent "$app_path" "$output_path"

@@ -74,4 +74,4 @@ if ($publishedFiles.Count -ne 1 -or $publishedFiles[0].Name -ne $expectedExecuta
 }
 
 $sizeMegabytes = $publishedFiles[0].Length / 1MB
-Write-Host "OctoHD single executable published to $($publishedFiles[0].FullName) ($($sizeMegabytes.ToString('N1')) MB)"
+Write-Output "OctoHD single executable published to $($publishedFiles[0].FullName) ($($sizeMegabytes.ToString('N1')) MB)"

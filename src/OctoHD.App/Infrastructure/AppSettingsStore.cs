@@ -16,22 +16,31 @@ public sealed record CustomPatchSourceSettings(string Id, string DisplayName, st
 
 public sealed class AppSettingsStore
 {
-    private static readonly string SettingsDirectory = Path.Combine(
+    private static readonly string DefaultSettingsPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "OctoHD");
-    private static readonly string SettingsPath = Path.Combine(SettingsDirectory, "settings-v1.json");
+        "OctoHD",
+        "settings-v1.json");
+    private readonly string _settingsDirectory;
+    private readonly string _settingsPath;
     private readonly SemaphoreSlim _saveLock = new(1, 1);
+
+    public AppSettingsStore(string? settingsPath = null)
+    {
+        _settingsPath = Path.GetFullPath(settingsPath ?? DefaultSettingsPath);
+        _settingsDirectory = Path.GetDirectoryName(_settingsPath)
+            ?? throw new ArgumentException("The settings path must have a parent directory.", nameof(settingsPath));
+    }
 
     public async Task<AppSettings> LoadAsync(CancellationToken cancellationToken = default)
     {
-        if (!File.Exists(SettingsPath))
+        if (!File.Exists(_settingsPath))
         {
             return new AppSettings();
         }
 
         try
         {
-            await using var stream = File.OpenRead(SettingsPath);
+            await using var stream = File.OpenRead(_settingsPath);
             return await JsonSerializer.DeserializeAsync(
                        stream,
                        AppSettingsJsonContext.Default.AppSettings,
@@ -49,8 +58,8 @@ public sealed class AppSettingsStore
         await _saveLock.WaitAsync(cancellationToken);
         try
         {
-            Directory.CreateDirectory(SettingsDirectory);
-            var temporaryPath = Path.Combine(SettingsDirectory, $"settings-{Guid.NewGuid():N}.tmp");
+            Directory.CreateDirectory(_settingsDirectory);
+            var temporaryPath = Path.Combine(_settingsDirectory, $"settings-{Guid.NewGuid():N}.tmp");
             try
             {
                 await using (var stream = new FileStream(
@@ -69,7 +78,7 @@ public sealed class AppSettingsStore
                     await stream.FlushAsync(cancellationToken);
                 }
 
-                File.Move(temporaryPath, SettingsPath, true);
+                File.Move(temporaryPath, _settingsPath, true);
             }
             finally
             {

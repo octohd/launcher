@@ -29,7 +29,7 @@ Releases require no Azure account, Apple Developer membership, signing certifica
 
 Windows executables are distributed without Authenticode. Microsoft Defender SmartScreen can therefore show **Windows protected your PC**, and managed devices may block execution according to their organization policy.
 
-The macOS job applies an anonymous ad-hoc code seal with `codesign --sign -`. This contains no certificate or verified publisher identity, but preserves the required .NET JIT entitlement and lets the updater reject structurally modified app bundles. The app is not submitted to Apple and is not notarized, so Gatekeeper can require the user to approve it under **System Settings → Privacy & Security → Open Anyway** after the first launch attempt.
+The macOS job applies an anonymous ad-hoc code seal with `codesign --sign -`. This contains no certificate or verified publisher identity, but preserves the .NET hardened-runtime entitlements required for JIT execution and for loading the native libraries extracted from the single-file executable. The packaging script also starts the signed executable for ten seconds before creating the ZIP, so an immediate startup failure stops the release job. The updater can reject structurally modified app bundles through the code seal. The app is not submitted to Apple and is not notarized, so Gatekeeper can require the user to approve it under **System Settings → Privacy & Security → Open Anyway** after the first launch attempt.
 
 The optional GitHub Actions variable `OCTOHD_BUNDLE_ID` selects the macOS bundle identifier. If omitted, packaging uses `st.octowow.octohd`.
 

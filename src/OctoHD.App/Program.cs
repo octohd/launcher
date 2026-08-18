@@ -1,6 +1,6 @@
+using System.Globalization;
 using Avalonia;
 using Avalonia.Fonts.Inter;
-using System.Globalization;
 using OctoHD.Core.Updates;
 
 namespace OctoHD.App;

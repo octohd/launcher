@@ -68,7 +68,7 @@ public sealed record PatchSourceDefinition
     {
         var builder = new UriBuilder(uri)
         {
-            Path = uri.AbsolutePath.EndsWith("/", StringComparison.Ordinal)
+            Path = uri.AbsolutePath.EndsWith('/')
                 ? uri.AbsolutePath
                 : $"{uri.AbsolutePath}/"
         };

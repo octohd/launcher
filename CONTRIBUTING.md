@@ -16,9 +16,20 @@ For substantial behavior or UI changes, open an issue first so the approach can 
 
 OctoHD requires the .NET 10 SDK. GNU Make provides the recommended shortcuts; PowerShell 7 is required for self-contained publish commands.
 
+The repository pins its .NET tools in `.config/dotnet-tools.json`. `make check` restores them automatically. The optional full script-lint target additionally expects `actionlint`, ShellCheck, and PSScriptAnalyzer 1.25 or newer on `PATH`:
+
+```text
+go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.12
+Install-Module PSScriptAnalyzer -Scope CurrentUser -RequiredVersion 1.25.0
+```
+
+Install ShellCheck using the package manager for your operating system.
+
 ```text
 make dev
 make check
+make lint
+make coverage
 make build-win-x64 VERSION=1.0.0
 ```
 
@@ -41,7 +52,7 @@ Before submitting a pull request, run:
 make check
 ```
 
-This restores dependencies, builds the Release configuration, runs the test suite, and verifies formatting. Add or update tests whenever behavior changes.
+This restores locked dependencies, builds the Release configuration, runs the test suite, and verifies C# and AXAML formatting. Add or update tests whenever behavior changes. Use `make coverage` for a local HTML coverage report under `coverage/report`; it enforces the current floors of 60% line and 45% branch coverage.
 
 ## Pull requests
 
