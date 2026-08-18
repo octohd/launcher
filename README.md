@@ -92,6 +92,14 @@ Choose Apple Silicon for M-series Macs or Intel for older Macs, extract the ZIP,
 
 </details>
 
+## Changelog
+
+- **v1.0.4** — Improved reliability, expanded testing, and made releases more consistent across all supported platforms.
+- **v1.0.3** — Refreshed the launcher design, made patch and installation status easier to read, and added useful project links.
+- **v1.0.2** — Polished the sidebar and text fields, and added the current app version to the launcher.
+- **v1.0.1** — Updated selection menus to better match the rest of the interface.
+- **v1.0.0** — First public release with patch management, custom sources, automatic updates, and Windows, Linux, and macOS support.
+
 ## Patch sources
 
 [Project Reforged](https://projectreforged.github.io/vanilla/downloads/) is included as the default source. OctoHD downloads its HD patches directly and validates the catalog metadata before installation.
