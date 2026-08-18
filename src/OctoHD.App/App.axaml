@@ -111,10 +111,11 @@
       <Setter Property="Foreground" Value="{StaticResource OctoText}" />
       <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
       <Setter Property="BorderThickness" Value="1" />
-      <Setter Property="Padding" Value="16,9" />
+      <Setter Property="Padding" Value="{OnPlatform Default='16,9', macOS='16,10,16,8', x:TypeArguments=Thickness}" />
       <Setter Property="FontWeight" Value="SemiBold" />
       <Setter Property="MinHeight" Value="40" />
       <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <Style Selector="Button:pointerover">
@@ -133,6 +134,7 @@
       <Setter Property="BorderBrush" Value="{StaticResource OctoGoldBright}" />
       <Setter Property="FontFamily" Value="{StaticResource OctoDisplayFont}" />
       <Setter Property="FontWeight" Value="Bold" />
+      <Setter Property="Padding" Value="16,9" />
     </Style>
 
     <Style Selector="Button.primary /template/ ContentPresenter#PART_ContentPresenter">
@@ -172,11 +174,15 @@
     </Style>
 
     <Style Selector="Button.compact">
-      <Setter Property="Padding" Value="8,5" />
+      <Setter Property="Padding" Value="{OnPlatform Default='8,5', macOS='8,6,8,4', x:TypeArguments=Thickness}" />
       <Setter Property="MinHeight" Value="30" />
       <Setter Property="FontSize" Value="9" />
       <Setter Property="HorizontalContentAlignment" Value="Center" />
       <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.compact.primary">
+      <Setter Property="Padding" Value="8,5" />
     </Style>
 
     <Style Selector="Button.danger:pointerover">
@@ -210,6 +216,10 @@
       <Setter Property="HorizontalContentAlignment" Value="Stretch" />
       <Setter Property="Padding" Value="16,11" />
       <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <Style Selector="Button.nav TextBlock">
+      <Setter Property="Margin" Value="{OnPlatform Default='0', macOS='0,1,0,-1', x:TypeArguments=Thickness}" />
     </Style>
 
     <Style Selector="Button.nav:pointerover">
@@ -282,7 +292,7 @@
 
     <Style Selector="Border.statusBadge">
       <Setter Property="CornerRadius" Value="11" />
-      <Setter Property="Padding" Value="9,2" />
+      <Setter Property="Padding" Value="{OnPlatform Default='9,2', macOS='9,3,9,1', x:TypeArguments=Thickness}" />
       <Setter Property="MinHeight" Value="22" />
       <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
@@ -292,7 +302,7 @@
       <Setter Property="BorderBrush" Value="#535F9DB8" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="CornerRadius" Value="10" />
-      <Setter Property="Padding" Value="8,3" />
+      <Setter Property="Padding" Value="{OnPlatform Default='8,3', macOS='8,4,8,2', x:TypeArguments=Thickness}" />
       <Setter Property="MinHeight" Value="22" />
       <Setter Property="HorizontalAlignment" Value="Left" />
       <Setter Property="VerticalAlignment" Value="Center" />
@@ -300,7 +310,7 @@
 
     <Style Selector="Border.installState">
       <Setter Property="CornerRadius" Value="11" />
-      <Setter Property="Padding" Value="8,4" />
+      <Setter Property="Padding" Value="{OnPlatform Default='8,4', macOS='8,5,8,3', x:TypeArguments=Thickness}" />
       <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
@@ -321,7 +331,7 @@
       <Setter Property="BorderBrush" Value="#35475562" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="CornerRadius" Value="5" />
-      <Setter Property="Padding" Value="7,3" />
+      <Setter Property="Padding" Value="{OnPlatform Default='7,3', macOS='7,4,7,2', x:TypeArguments=Thickness}" />
     </Style>
 
     <Style Selector="TextBox, ComboBox">
