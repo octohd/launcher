@@ -49,7 +49,20 @@ jobs:
       - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
         with:
           global-json-file: global.json
-      - run: make check
+      - name: Run quality checks
+        shell: bash
+        run: |
+          set -o pipefail
+          make check 2>&1 | tee make-check.log
+      - name: Explain quality check failure
+        if: failure()
+        shell: pwsh
+        run: |
+          $details = (Get-Content make-check.log -Tail 60 | Out-String) `
+            .Replace('%', '%25') `
+            .Replace("`r", '%0D') `
+            .Replace("`n", '%0A')
+          Write-Output "::error title=make check failed::$details"
       - run: make coverage
       - name: Add coverage to job summary
         if: always()
