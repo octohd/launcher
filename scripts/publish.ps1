@@ -35,6 +35,7 @@ if (Test-Path -LiteralPath $resolvedOutput) {
 
 $publishProperties = @(
     "-p:PublishAot=$publishAot",
+    '-p:RestoreLockedMode=true',
     '-p:IncludeSourceRevisionInInformationalVersion=false',
     '-p:PublishSingleFile=true',
     '-p:IncludeNativeLibrariesForSelfExtract=true',
