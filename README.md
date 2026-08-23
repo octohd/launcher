@@ -94,7 +94,7 @@ Choose Apple Silicon for M-series Macs or Intel for older Macs, extract the ZIP,
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for the complete release history. The same file is embedded in each OctoHD build and displayed inside the app.
+See [CHANGELOG.md](CHANGELOG.md) for the complete release history.
 
 ## Patch sources
 
