@@ -7,7 +7,7 @@
     <Product>OctoHD Launcher</Product>
     <Description>OctoWoW HD patch launcher</Description>
     <Authors>OctoHD</Authors>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
     <OctoHDUpdateRepository Condition="'$(OctoHDUpdateRepository)' == ''"></OctoHDUpdateRepository>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IsAotCompatible>true</IsAotCompatible>
@@ -30,6 +30,9 @@
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <EmbeddedResource Include="..\..\CHANGELOG.md"
+                      Link="Resources\CHANGELOG.md"
+                      LogicalName="OctoHD.App.Resources.CHANGELOG.md" />
     <Watch Include="**\*.axaml" Exclude="bin\**;obj\**" />
   </ItemGroup>
 </Project>

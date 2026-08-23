@@ -19,6 +19,7 @@ public sealed class MainWindowViewModelTests
         Assert.Equal(3, viewModel.Patches.Count);
         Assert.Equal(3, viewModel.VisiblePatches.Count);
         Assert.Equal(4, viewModel.FilterOptions.Count);
+        Assert.NotEmpty(viewModel.ChangelogEntries);
         Assert.StartsWith("OCTOHD  v", viewModel.AppVersionText);
         Assert.Equal("No OctoWoW folder selected", viewModel.DataFolder);
         Assert.False(viewModel.HasDataFolder);
@@ -27,6 +28,20 @@ public sealed class MainWindowViewModelTests
         Assert.False(viewModel.RefreshCommand.CanExecute(null));
         Assert.False(viewModel.UpdateAllCommand.CanExecute(null));
         Assert.False(viewModel.LaunchCommand.CanExecute(null));
+        Assert.False(viewModel.IsChangelogOpen);
+        Assert.True(viewModel.IsMainContentEnabled);
+        Assert.True(viewModel.OpenChangelogCommand.CanExecute(null));
+        Assert.False(viewModel.CloseChangelogCommand.CanExecute(null));
+
+        viewModel.OpenChangelogCommand.Execute(null);
+        Assert.True(viewModel.IsChangelogOpen);
+        Assert.False(viewModel.IsMainContentEnabled);
+        Assert.False(viewModel.OpenChangelogCommand.CanExecute(null));
+        Assert.True(viewModel.CloseChangelogCommand.CanExecute(null));
+
+        viewModel.CloseChangelogCommand.Execute(null);
+        Assert.False(viewModel.IsChangelogOpen);
+        Assert.True(viewModel.IsMainContentEnabled);
 
         viewModel.Patches.Single(item => item.Definition.Id == basePatch.Id)
             .ApplyScanResult(new PatchScanResult(basePatch, PatchStatus.Active));

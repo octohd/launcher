@@ -32,6 +32,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private bool _isAddingPatchSource;
     private bool _isUpdateReady;
     private string? _latestAppVersion;
+    private bool _isChangelogOpen;
 
     public MainWindowViewModel(
         IPatchCatalog catalog,
@@ -76,6 +77,9 @@ public sealed class MainWindowViewModel : ObservableObject
         RemovePatchSourceCommand = new AsyncRelayCommand(RemovePatchSourceAsync, () => CanRemovePatchSource && !IsBusy);
         RestartUpdateCommand = new AsyncRelayCommand(RestartToApplyUpdateAsync, () => IsUpdateReady);
         DeferUpdateCommand = new AsyncRelayCommand(DeferUpdateAsync, () => IsUpdateReady);
+        OpenChangelogCommand = new AsyncRelayCommand(OpenChangelogAsync, () => !IsChangelogOpen);
+        CloseChangelogCommand = new AsyncRelayCommand(CloseChangelogAsync, () => IsChangelogOpen);
+        ChangelogEntries = EmbeddedChangelog.LoadOrFallback();
     }
 
     public ObservableCollection<PatchItemViewModel> Patches { get; }
@@ -85,6 +89,8 @@ public sealed class MainWindowViewModel : ObservableObject
     public ObservableCollection<PatchSourceItemViewModel> PatchSources { get; }
 
     public IReadOnlyList<string> FilterOptions { get; } = ["All patches", "Installed", "Not installed", "Updates"];
+
+    public IReadOnlyList<ChangelogEntry> ChangelogEntries { get; }
 
     public string AppVersionText => $"OCTOHD  v{_selfUpdateService.CurrentVersion}";
 
@@ -106,7 +112,27 @@ public sealed class MainWindowViewModel : ObservableObject
 
     public AsyncRelayCommand DeferUpdateCommand { get; }
 
+    public AsyncRelayCommand OpenChangelogCommand { get; }
+
+    public AsyncRelayCommand CloseChangelogCommand { get; }
+
     public event Action? RestartRequested;
+
+    public bool IsChangelogOpen
+    {
+        get => _isChangelogOpen;
+        private set
+        {
+            if (SetProperty(ref _isChangelogOpen, value))
+            {
+                OnPropertyChanged(nameof(IsMainContentEnabled));
+                OpenChangelogCommand.NotifyCanExecuteChanged();
+                CloseChangelogCommand.NotifyCanExecuteChanged();
+            }
+        }
+    }
+
+    public bool IsMainContentEnabled => !IsChangelogOpen;
 
     public bool IsUpdateReady
     {
@@ -492,6 +518,18 @@ public sealed class MainWindowViewModel : ObservableObject
     private Task DeferUpdateAsync()
     {
         IsUpdateReady = false;
+        return Task.CompletedTask;
+    }
+
+    private Task OpenChangelogAsync()
+    {
+        IsChangelogOpen = true;
+        return Task.CompletedTask;
+    }
+
+    private Task CloseChangelogAsync()
+    {
+        IsChangelogOpen = false;
         return Task.CompletedTask;
     }
 

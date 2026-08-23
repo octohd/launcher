@@ -4,6 +4,7 @@ using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Layout;
 using Avalonia.VisualTree;
+using OctoHD.App.Infrastructure;
 using OctoHD.App.Views;
 
 namespace OctoHD.App.Tests;
@@ -58,6 +59,58 @@ public sealed class MainWindowTests
                 OperatingSystem.IsMacOS() ? new Thickness(16, 10, 16, 8) : new Thickness(16, 9),
                 rescanButton.Padding);
             Assert.Equal(new Thickness(16, 9), playButton.Padding);
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void Changelog_button_shows_embedded_release_notes_and_closes_the_overlay()
+    {
+        using var installation = new TemporaryInstallation();
+        var viewModel = AppTestFactory.ViewModel(
+            new TestCatalog(AppTestFactory.Patch()),
+            new StubScanner(),
+            installation.SettingsPath);
+        var window = new MainWindow
+        {
+            DataContext = viewModel
+        };
+
+        try
+        {
+            window.Show();
+            var mainView = Assert.IsType<Grid>(window.FindControl<Control>("MainApplicationView"));
+            var overlay = Assert.IsType<Grid>(window.FindControl<Control>("ChangelogOverlay"));
+            var openButton = Assert.IsType<Button>(window.FindControl<Control>("OpenChangelogButton"));
+            var closeButton = Assert.IsType<Button>(window.FindControl<Control>("CloseChangelogButton"));
+            var entries = Assert.IsType<ItemsControl>(window.FindControl<Control>("ChangelogEntries"));
+
+            Assert.False(overlay.IsVisible);
+            Assert.True(mainView.IsEnabled);
+            Assert.True(closeButton.IsCancel);
+
+            var openCommand = openButton.Command ?? throw new InvalidOperationException("Open command is not bound.");
+            Assert.Same(viewModel.OpenChangelogCommand, openCommand);
+            openCommand.Execute(null);
+            window.UpdateLayout();
+
+            Assert.True(overlay.IsVisible);
+            Assert.False(mainView.IsEnabled);
+            Assert.Same(viewModel.ChangelogEntries, entries.ItemsSource);
+            var firstEntry = Assert.IsType<ChangelogEntry>(viewModel.ChangelogEntries[0]);
+            var texts = overlay.GetVisualDescendants().OfType<TextBlock>().ToArray();
+            Assert.Contains(texts, text => Equals(text.Text, firstEntry.Version));
+            Assert.Contains(texts, text => Equals(text.Text, firstEntry.Description));
+
+            var closeCommand = closeButton.Command ?? throw new InvalidOperationException("Close command is not bound.");
+            Assert.Same(viewModel.CloseChangelogCommand, closeCommand);
+            closeCommand.Execute(null);
+
+            Assert.False(overlay.IsVisible);
+            Assert.True(mainView.IsEnabled);
         }
         finally
         {

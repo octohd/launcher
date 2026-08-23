@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
@@ -6,6 +7,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using OctoHD.App.ViewModels;
 
 namespace OctoHD.App.Views;
@@ -15,6 +17,7 @@ public sealed partial class MainWindow : Window
     private Bitmap? _cursorBitmap;
     private Cursor? _fantasyCursor;
     private bool _initialized;
+    private MainWindowViewModel? _viewModel;
 
     public MainWindow()
     {
@@ -43,8 +46,47 @@ public sealed partial class MainWindow : Window
 
     private void MainWindow_OnClosed(object? sender, EventArgs e)
     {
+        if (_viewModel is not null)
+        {
+            _viewModel.PropertyChanged -= ViewModel_OnPropertyChanged;
+        }
+
         _fantasyCursor?.Dispose();
         _cursorBitmap?.Dispose();
+    }
+
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        if (_viewModel is not null)
+        {
+            _viewModel.PropertyChanged -= ViewModel_OnPropertyChanged;
+        }
+
+        base.OnDataContextChanged(e);
+        _viewModel = DataContext as MainWindowViewModel;
+        if (_viewModel is not null)
+        {
+            _viewModel.PropertyChanged += ViewModel_OnPropertyChanged;
+        }
+    }
+
+    private void ViewModel_OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(MainWindowViewModel.IsChangelogOpen)
+            || sender is not MainWindowViewModel viewModel)
+        {
+            return;
+        }
+
+        Dispatcher.UIThread.Post(
+            () =>
+            {
+                if (_viewModel == viewModel && IsVisible)
+                {
+                    (viewModel.IsChangelogOpen ? CloseChangelogButton : OpenChangelogButton).Focus();
+                }
+            },
+            DispatcherPriority.Input);
     }
 
     private async void MainWindow_OnOpened(object? sender, EventArgs e)

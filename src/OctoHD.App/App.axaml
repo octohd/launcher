@@ -190,6 +190,35 @@
       <Setter Property="BorderBrush" Value="#B85C4F" />
     </Style>
 
+    <Style Selector="Button.footerLink">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Foreground" Value="#73838F" />
+      <Setter Property="FontSize" Value="8" />
+      <Setter Property="MinHeight" Value="26" />
+      <Setter Property="Padding" Value="5,4" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <Style Selector="Button.footerLink:pointerover">
+      <Setter Property="Background" Value="#7A202832" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource OctoGoldBright}" />
+    </Style>
+
+    <Style Selector="Button.changelogClose">
+      <Setter Property="Width" Value="34" />
+      <Setter Property="Height" Value="34" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Background" Value="#B91A232C" />
+      <Setter Property="FontSize" Value="18" />
+      <Setter Property="FontWeight" Value="Normal" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
     <Style Selector="Border.sidebar">
       <Setter Property="Background" Value="#F50E141A" />
       <Setter Property="BorderBrush" Value="#35434E" />
@@ -248,6 +277,34 @@
       <Setter Property="CornerRadius" Value="10" />
       <Setter Property="Padding" Value="20,16" />
       <Setter Property="BoxShadow" Value="0 10 28 0 #5C000000" />
+    </Style>
+
+    <Style Selector="Border.changelogPanel">
+      <Setter Property="Background" Value="#FC121920" />
+      <Setter Property="BorderBrush" Value="#8C6531" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="26" />
+      <Setter Property="BoxShadow" Value="0 18 52 0 #B0000000" />
+    </Style>
+
+    <Style Selector="Border.changelogEntry">
+      <Setter Property="Background" Value="#D5161D25" />
+      <Setter Property="BorderBrush" Value="#34424E" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="8" />
+      <Setter Property="Padding" Value="15" />
+      <Setter Property="Margin" Value="0,0,0,10" />
+    </Style>
+
+    <Style Selector="Border.changelogVersion">
+      <Setter Property="Background" Value="#C13A2B1B" />
+      <Setter Property="BorderBrush" Value="#8C6531" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="12" />
+      <Setter Property="Padding" Value="8,5" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
     <Style Selector="Border.statusPanel">

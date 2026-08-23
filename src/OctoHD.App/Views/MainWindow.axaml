@@ -1,8 +1,8 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:OctoHD.App.ViewModels" x:Class="OctoHD.App.Views.MainWindow"
-        x:DataType="vm:MainWindowViewModel" Title="OctoHD Launcher" Width="1240"
-        Height="760" MinWidth="1060" MinHeight="640"
-        WindowStartupLocation="CenterScreen" Icon="/Assets/Brand/OctoHD-Icon.ico"
+        xmlns:infra="using:OctoHD.App.Infrastructure" xmlns:vm="using:OctoHD.App.ViewModels"
+        x:Class="OctoHD.App.Views.MainWindow" x:DataType="vm:MainWindowViewModel" Title="OctoHD Launcher"
+        Width="1240" Height="760" MinWidth="1060"
+        MinHeight="640" WindowStartupLocation="CenterScreen" Icon="/Assets/Brand/OctoHD-Icon.ico"
         Background="{StaticResource OctoBackground}">
   <Grid>
     <Image Source="/Assets/Backgrounds/octohd-fantasy-bg.png" Stretch="UniformToFill" Opacity="0.68" />
@@ -16,7 +16,7 @@
       </Border.Background>
     </Border>
 
-    <Grid ColumnDefinitions="224,*">
+    <Grid x:Name="MainApplicationView" ColumnDefinitions="224,*" IsEnabled="{Binding IsMainContentEnabled}">
       <Grid Grid.Column="0" ClipToBounds="True">
         <Border Classes="sidebar">
           <Grid RowDefinitions="Auto,Auto,*,Auto">
@@ -114,8 +114,14 @@
                   </StackPanel>
                 </StackPanel>
               </Border>
-              <TextBlock Text="{Binding AppVersionText}" HorizontalAlignment="Center" FontSize="8"
-                         FontWeight="SemiBold" LetterSpacing="1" Foreground="#667581" />
+              <Button x:Name="OpenChangelogButton" Classes="footerLink" Command="{Binding OpenChangelogCommand}"
+                      ToolTip.Tip="View the release history">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                  <TextBlock Text="CHANGELOG" FontWeight="Bold" LetterSpacing="1" />
+                  <TextBlock Grid.Column="1" Text="{Binding AppVersionText}" FontWeight="SemiBold"
+                             LetterSpacing="0.6" />
+                </Grid>
+              </Button>
             </StackPanel>
           </Grid>
         </Border>
@@ -308,6 +314,44 @@
           </ItemsControl>
         </ScrollViewer>
       </Grid>
+    </Grid>
+
+    <Grid x:Name="ChangelogOverlay" Panel.ZIndex="100" Background="#C7080D13"
+          IsVisible="{Binding IsChangelogOpen}" KeyboardNavigation.TabNavigation="Cycle">
+      <Border Classes="changelogPanel" Width="720" MaxHeight="560"
+              Margin="36" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid RowDefinitions="Auto,*" RowSpacing="20">
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="20">
+            <StackPanel Spacing="4">
+              <TextBlock Text="Changelog" Classes="displayTitle" FontSize="25" />
+              <TextBlock Text="Release notes from CHANGELOG.md, newest first" Classes="muted" FontSize="11" />
+            </StackPanel>
+            <Button x:Name="CloseChangelogButton" Grid.Column="1" Classes="changelogClose"
+                    Content="×" Command="{Binding CloseChangelogCommand}" IsCancel="True"
+                    ToolTip.Tip="Close changelog" />
+          </Grid>
+
+          <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled">
+            <ItemsControl x:Name="ChangelogEntries" ItemsSource="{Binding ChangelogEntries}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="infra:ChangelogEntry">
+                  <Border Classes="changelogEntry">
+                    <Grid ColumnDefinitions="96,*" ColumnSpacing="18">
+                      <Border Classes="changelogVersion">
+                        <TextBlock Text="{Binding Version}" FontSize="10" FontWeight="Bold"
+                                   LetterSpacing="0.5" Foreground="{StaticResource OctoGoldBright}" HorizontalAlignment="Center" />
+                      </Border>
+                      <TextBlock Grid.Column="1" Text="{Binding Description}" TextWrapping="Wrap"
+                                 FontSize="12" LineHeight="18" Foreground="{StaticResource OctoText}"
+                                 VerticalAlignment="Center" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+        </Grid>
+      </Border>
     </Grid>
   </Grid>
 </Window>
