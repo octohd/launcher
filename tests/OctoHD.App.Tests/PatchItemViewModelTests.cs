@@ -25,7 +25,11 @@ public sealed class PatchItemViewModelTests
         Assert.True(item.HasDependencies);
         Assert.Equal("Requires: Base", item.DependencyText);
         Assert.Equal("Checking…", item.StatusText);
-        Assert.Equal("#245E7A", item.StatusBackground);
+        Assert.Equal("CHECKING…", item.StatusBadgeText);
+        Assert.Equal("#2A245E7A", item.StatusBackground);
+        Assert.Equal("#65539ABD", item.StatusBorderBrush);
+        Assert.Equal("#8DD7F1", item.StatusForeground);
+        Assert.Equal("…", item.StatusGlyph);
         Assert.Equal("INSTALL ULTRA", item.ActionLabel);
         Assert.False(item.IsInstalled);
         Assert.False(item.CanInstall);
@@ -33,28 +37,35 @@ public sealed class PatchItemViewModelTests
     }
 
     [Theory]
-    [InlineData(PatchStatus.NotInstalled, "Not installed", "#303B44")]
-    [InlineData(PatchStatus.Active, "Enabled", "#246B46")]
-    [InlineData(PatchStatus.Disabled, "Disabled", "#4C5861")]
-    [InlineData(PatchStatus.UpdateAvailableActive, "Update available · enabled", "#8A641F")]
-    [InlineData(PatchStatus.UpdateAvailableDisabled, "Update available · disabled", "#8A641F")]
-    [InlineData(PatchStatus.Conflict, "File conflict", "#7A2929")]
-    [InlineData(PatchStatus.ForeignFile, "Unknown file detected", "#7A2929")]
-    [InlineData(PatchStatus.Corrupt, "File damaged", "#7A2929")]
-    [InlineData(PatchStatus.Checking, "Checking…", "#245E7A")]
-    [InlineData(PatchStatus.Busy, "Processing…", "#245E7A")]
-    [InlineData(PatchStatus.Error, "Error", "#7A2929")]
+    [InlineData(PatchStatus.NotInstalled, "Not installed", "#2A303B44", "#65596772", "#ABB8C1", "○")]
+    [InlineData(PatchStatus.Active, "Enabled", "#2A1E7D50", "#6553B77D", "#8DE5AD", "✓")]
+    [InlineData(PatchStatus.Disabled, "Disabled", "#2A4C5861", "#6576848E", "#BEC8CF", "–")]
+    [InlineData(PatchStatus.UpdateAvailableActive, "Update available · enabled", "#2A8A641F", "#65C69235", "#F0C875", "↓")]
+    [InlineData(PatchStatus.UpdateAvailableDisabled, "Update available · disabled", "#2A8A641F", "#65C69235", "#F0C875", "↓")]
+    [InlineData(PatchStatus.Conflict, "File conflict", "#2A8B3E39", "#65D16C62", "#F3A199", "×")]
+    [InlineData(PatchStatus.ForeignFile, "Unknown file detected", "#2A8B3E39", "#65D16C62", "#F3A199", "×")]
+    [InlineData(PatchStatus.Corrupt, "File damaged", "#2A8B3E39", "#65D16C62", "#F3A199", "×")]
+    [InlineData(PatchStatus.Checking, "Checking…", "#2A245E7A", "#65539ABD", "#8DD7F1", "…")]
+    [InlineData(PatchStatus.Busy, "Processing…", "#2A245E7A", "#65539ABD", "#8DD7F1", "…")]
+    [InlineData(PatchStatus.Error, "Error", "#2A8B3E39", "#65D16C62", "#F3A199", "×")]
     public void Scan_status_controls_labels_and_colors(
         PatchStatus status,
         string expectedText,
-        string expectedBackground)
+        string expectedBackground,
+        string expectedBorder,
+        string expectedForeground,
+        string expectedGlyph)
     {
         var item = CreateItem();
 
         item.ApplyScanResult(new PatchScanResult(item.Definition, status, Message: "Detail"));
 
         Assert.Equal(expectedText, item.StatusText);
+        Assert.Equal(expectedText.ToUpperInvariant(), item.StatusBadgeText);
         Assert.Equal(expectedBackground, item.StatusBackground);
+        Assert.Equal(expectedBorder, item.StatusBorderBrush);
+        Assert.Equal(expectedForeground, item.StatusForeground);
+        Assert.Equal(expectedGlyph, item.StatusGlyph);
         Assert.Equal("Detail", item.DetailMessage);
         Assert.True(item.HasDetailMessage);
         Assert.Equal(
@@ -116,10 +127,18 @@ public sealed class PatchItemViewModelTests
         item.EndWithError("Network unavailable");
         Assert.False(item.IsBusy);
         Assert.Equal("Network unavailable", item.StatusText);
+        Assert.Equal("Network unavailable", item.StatusBadgeText);
         Assert.Equal("Network unavailable", item.DetailMessage);
-        Assert.Equal("#7A2929", item.StatusBackground);
+        Assert.Equal("#2A8B3E39", item.StatusBackground);
+        Assert.Equal("#65D16C62", item.StatusBorderBrush);
+        Assert.Equal("#F3A199", item.StatusForeground);
+        Assert.Equal("×", item.StatusGlyph);
         Assert.Equal("#F28B79", item.DetailForeground);
         Assert.Contains(nameof(PatchItemViewModel.StatusText), changes);
+        Assert.Contains(nameof(PatchItemViewModel.StatusBadgeText), changes);
+        Assert.Contains(nameof(PatchItemViewModel.StatusBorderBrush), changes);
+        Assert.Contains(nameof(PatchItemViewModel.StatusForeground), changes);
+        Assert.Contains(nameof(PatchItemViewModel.StatusGlyph), changes);
         Assert.Contains(nameof(PatchItemViewModel.Progress), changes);
 
         item.ApplyScanResult(new PatchScanResult(item.Definition, PatchStatus.Active));

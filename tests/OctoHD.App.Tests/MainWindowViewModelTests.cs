@@ -7,6 +7,72 @@ namespace OctoHD.App.Tests;
 public sealed class MainWindowViewModelTests
 {
     [Fact]
+    public async Task Patch_library_defaults_to_cards_and_can_switch_views()
+    {
+        using var installation = new TemporaryInstallation();
+        var viewModel = AppTestFactory.ViewModel(
+            new TestCatalog(AppTestFactory.Patch()),
+            new StubScanner(),
+            installation.SettingsPath);
+        var notifications = new List<string?>();
+        viewModel.PropertyChanged += (_, eventArgs) => notifications.Add(eventArgs.PropertyName);
+
+        Assert.True(viewModel.IsCardView);
+        Assert.False(viewModel.IsListView);
+
+        await viewModel.SetPatchViewModeAsync(true);
+        await viewModel.SetPatchViewModeAsync(true);
+
+        Assert.False(viewModel.IsCardView);
+        Assert.True(viewModel.IsListView);
+
+        await viewModel.SetPatchViewModeAsync(false);
+
+        Assert.True(viewModel.IsCardView);
+        Assert.False(viewModel.IsListView);
+        Assert.Equal(
+            [
+                nameof(MainWindowViewModel.IsListView),
+                nameof(MainWindowViewModel.IsCardView),
+                nameof(MainWindowViewModel.IsListView),
+                nameof(MainWindowViewModel.IsCardView)
+            ],
+            notifications);
+    }
+
+    [Fact]
+    public async Task Patch_library_view_mode_is_persisted_and_restored()
+    {
+        using var installation = new TemporaryInstallation();
+        var catalog = new TestCatalog(AppTestFactory.Patch());
+        var firstViewModel = AppTestFactory.ViewModel(
+            catalog,
+            new StubScanner(),
+            installation.SettingsPath);
+        await firstViewModel.InitializeAsync();
+
+        await firstViewModel.SetPatchViewModeAsync(true);
+
+        var saved = await new AppSettingsStore(installation.SettingsPath)
+            .LoadAsync(TestContext.Current.CancellationToken);
+        Assert.True(saved.IsListView);
+
+        var restoredViewModel = AppTestFactory.ViewModel(
+            catalog,
+            new StubScanner(),
+            installation.SettingsPath);
+        await restoredViewModel.InitializeAsync();
+
+        Assert.True(restoredViewModel.IsListView);
+        Assert.False(restoredViewModel.IsCardView);
+
+        await restoredViewModel.SetPatchViewModeAsync(false);
+        saved = await new AppSettingsStore(installation.SettingsPath)
+            .LoadAsync(TestContext.Current.CancellationToken);
+        Assert.False(saved.IsListView);
+    }
+
+    [Fact]
     public async Task View_model_exposes_summary_filters_and_source_state()
     {
         using var installation = new TemporaryInstallation();

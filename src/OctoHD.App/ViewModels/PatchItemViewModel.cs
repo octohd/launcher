@@ -95,17 +95,15 @@ public sealed class PatchItemViewModel : ObservableObject
         _ => "Unknown"
     };
 
-    public string StatusBackground => _operationError is not null
-        ? "#7A2929"
-        : _scanResult.Status switch
-        {
-            PatchStatus.Active => "#246B46",
-            PatchStatus.Disabled => "#4C5861",
-            PatchStatus.UpdateAvailableActive or PatchStatus.UpdateAvailableDisabled => "#8A641F",
-            PatchStatus.Conflict or PatchStatus.ForeignFile or PatchStatus.Corrupt or PatchStatus.Error => "#7A2929",
-            PatchStatus.Busy or PatchStatus.Checking => "#245E7A",
-            _ => "#303B44"
-        };
+    public string StatusBadgeText => _operationError ?? StatusText.ToUpperInvariant();
+
+    public string StatusBackground => StatusPalette.Background;
+
+    public string StatusBorderBrush => StatusPalette.Border;
+
+    public string StatusForeground => StatusPalette.Foreground;
+
+    public string StatusGlyph => StatusPalette.Glyph;
 
     public string DetailForeground => _operationError is not null || _scanResult.Status is
         PatchStatus.Conflict or PatchStatus.ForeignFile or PatchStatus.Corrupt or PatchStatus.Error
@@ -177,12 +175,13 @@ public sealed class PatchItemViewModel : ObservableObject
         RaiseStateProperties();
     }
 
-    public void ApplyProgress(PatchOperationProgress progress)
+    public void ApplyProgress(PatchOperationProgress progress, string? context = null)
     {
         Progress = progress.Percentage;
+        var prefix = string.IsNullOrWhiteSpace(context) ? string.Empty : $"{context} · ";
         _operationText = progress.Phase == "Download"
-            ? $"{progress.Percentage:N0}% · {FormatBytes((long)progress.BytesPerSecond)}/s"
-            : progress.Phase;
+            ? $"{prefix}{progress.Percentage:N0}% · {FormatBytes((long)progress.BytesPerSecond)}/s"
+            : $"{prefix}{progress.Phase}";
         OnPropertyChanged(nameof(OperationText));
         OnPropertyChanged(nameof(HasOperationText));
     }
@@ -198,7 +197,11 @@ public sealed class PatchItemViewModel : ObservableObject
     private void RaiseStateProperties()
     {
         OnPropertyChanged(nameof(StatusText));
+        OnPropertyChanged(nameof(StatusBadgeText));
         OnPropertyChanged(nameof(StatusBackground));
+        OnPropertyChanged(nameof(StatusBorderBrush));
+        OnPropertyChanged(nameof(StatusForeground));
+        OnPropertyChanged(nameof(StatusGlyph));
         OnPropertyChanged(nameof(DetailForeground));
         OnPropertyChanged(nameof(IsEnabled));
         OnPropertyChanged(nameof(IsInstalled));
@@ -221,6 +224,45 @@ public sealed class PatchItemViewModel : ObservableObject
         PatchStatus.NotInstalled
         or PatchStatus.UpdateAvailableActive
         or PatchStatus.UpdateAvailableDisabled;
+
+    private StatusBadgePalette StatusPalette => _operationError is not null
+        ? StatusBadgePalette.Error
+        : _scanResult.Status switch
+        {
+            PatchStatus.Active => StatusBadgePalette.Success,
+            PatchStatus.Disabled => StatusBadgePalette.Neutral,
+            PatchStatus.UpdateAvailableActive or PatchStatus.UpdateAvailableDisabled => StatusBadgePalette.Warning,
+            PatchStatus.Conflict or PatchStatus.ForeignFile or PatchStatus.Corrupt or PatchStatus.Error =>
+                StatusBadgePalette.Error,
+            PatchStatus.Busy or PatchStatus.Checking => StatusBadgePalette.Info,
+            PatchStatus.NotInstalled => StatusBadgePalette.NotInstalled,
+            _ => StatusBadgePalette.NotInstalled
+        };
+
+    private readonly record struct StatusBadgePalette(
+        string Background,
+        string Border,
+        string Foreground,
+        string Glyph)
+    {
+        public static StatusBadgePalette Success { get; } =
+            new("#2A1E7D50", "#6553B77D", "#8DE5AD", "✓");
+
+        public static StatusBadgePalette Neutral { get; } =
+            new("#2A4C5861", "#6576848E", "#BEC8CF", "–");
+
+        public static StatusBadgePalette Warning { get; } =
+            new("#2A8A641F", "#65C69235", "#F0C875", "↓");
+
+        public static StatusBadgePalette Error { get; } =
+            new("#2A8B3E39", "#65D16C62", "#F3A199", "×");
+
+        public static StatusBadgePalette Info { get; } =
+            new("#2A245E7A", "#65539ABD", "#8DD7F1", "…");
+
+        public static StatusBadgePalette NotInstalled { get; } =
+            new("#2A303B44", "#65596772", "#ABB8C1", "○");
+    }
 
     private static string FormatBytes(long bytes)
     {

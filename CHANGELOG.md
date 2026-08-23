@@ -1,5 +1,6 @@
 # Changelog
 
+- **v1.0.8** — Added automatic patch dependencies, a saved card/list library view, subtle animated background effects, and consistent installation-style status badges across patch states.
 - **v1.0.7** — Added an in-app changelog that presents release notes bundled directly from CHANGELOG.md.
 - **v1.0.6** — Fixed fractional display scaling on Wayland-based Linux desktops and added rendering checks for 100%, 150%, and 200% scaling.
 - **v1.0.5** — Fixed vertically misaligned button and badge text on macOS while preserving the existing layout on Windows and Linux.

@@ -142,6 +142,36 @@ public sealed partial class MainWindow : Window
         }
     }
 
+    private async void CardView_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            try
+            {
+                await viewModel.SetPatchViewModeAsync(false);
+            }
+            catch (Exception exception)
+            {
+                viewModel.ReportViewPreferenceError(exception.Message);
+            }
+        }
+    }
+
+    private async void ListView_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel viewModel)
+        {
+            try
+            {
+                await viewModel.SetPatchViewModeAsync(true);
+            }
+            catch (Exception exception)
+            {
+                viewModel.ReportViewPreferenceError(exception.Message);
+            }
+        }
+    }
+
     private void ExternalLink_OnClick(object? sender, RoutedEventArgs e)
     {
         if (sender is not Button { Tag: string target }

@@ -49,7 +49,11 @@ internal sealed class TestCatalog(params PatchDefinition[] patches) : IPatchCata
 
 internal sealed class StaticResponseHandler(byte[] content, string etag = "\"test-etag\"") : HttpMessageHandler
 {
-    public int RequestCount { get; private set; }
+    private readonly List<Uri> _requestUris = [];
+
+    public int RequestCount => _requestUris.Count;
+
+    public IReadOnlyList<Uri> RequestUris => _requestUris;
 
     public Uri? LastRequestUri { get; private set; }
 
@@ -57,8 +61,12 @@ internal sealed class StaticResponseHandler(byte[] content, string etag = "\"tes
         HttpRequestMessage request,
         CancellationToken cancellationToken)
     {
-        RequestCount++;
         LastRequestUri = request.RequestUri;
+        if (request.RequestUri is not null)
+        {
+            _requestUris.Add(request.RequestUri);
+        }
+
         var response = new HttpResponseMessage(HttpStatusCode.OK)
         {
             Content = new ByteArrayContent(content),

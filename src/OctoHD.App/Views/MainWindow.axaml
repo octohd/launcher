@@ -1,12 +1,14 @@
 <Window xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:infra="using:OctoHD.App.Infrastructure" xmlns:vm="using:OctoHD.App.ViewModels"
-        x:Class="OctoHD.App.Views.MainWindow" x:DataType="vm:MainWindowViewModel" Title="OctoHD Launcher"
-        Width="1240" Height="760" MinWidth="1060"
-        MinHeight="640" WindowStartupLocation="CenterScreen" Icon="/Assets/Brand/OctoHD-Icon.ico"
+        xmlns:controls="using:OctoHD.App.Controls" xmlns:infra="using:OctoHD.App.Infrastructure"
+        xmlns:vm="using:OctoHD.App.ViewModels" x:Class="OctoHD.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel" Title="OctoHD Launcher" Width="1240"
+        Height="760" MinWidth="1060" MinHeight="640"
+        WindowStartupLocation="CenterScreen" Icon="/Assets/Brand/OctoHD-Icon.ico"
         Background="{StaticResource OctoBackground}">
-  <Grid>
-    <Image Source="/Assets/Backgrounds/octohd-fantasy-bg.png" Stretch="UniformToFill" Opacity="0.68" />
-    <Border>
+  <Grid ClipToBounds="True">
+    <Image ZIndex="0" Source="/Assets/Backgrounds/octohd-fantasy-bg.png" Stretch="UniformToFill"
+           Opacity="0.68" />
+    <Border ZIndex="1">
       <Border.Background>
         <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
           <GradientStop Color="#B2080D13" Offset="0" />
@@ -16,7 +18,12 @@
       </Border.Background>
     </Border>
 
-    <Grid x:Name="MainApplicationView" ColumnDefinitions="224,*" IsEnabled="{Binding IsMainContentEnabled}">
+    <controls:ParticleBackground x:Name="ParticleBackgroundLayer" ZIndex="2" ParticleCount="48"
+                                 Seed="7927" IsPaused="{Binding IsChangelogOpen}" IsHitTestVisible="False"
+                                 ClipToBounds="True" />
+
+    <Grid x:Name="MainApplicationView" ZIndex="10" ColumnDefinitions="224,*"
+          IsEnabled="{Binding IsMainContentEnabled}">
       <Grid Grid.Column="0" ClipToBounds="True">
         <Border Classes="sidebar">
           <Grid RowDefinitions="Auto,Auto,*,Auto">
@@ -222,7 +229,7 @@
           </Grid>
         </Border>
 
-        <Grid Grid.Row="4" Margin="32,0,32,14" ColumnDefinitions="*,230,150,Auto"
+        <Grid Grid.Row="4" Margin="32,0,32,14" ColumnDefinitions="*,230,150,Auto,Auto"
               ColumnSpacing="10" IsVisible="{Binding IsInstallationValid}">
           <StackPanel Spacing="2" VerticalAlignment="Center">
             <TextBlock Text="PATCH LIBRARY" FontSize="10" FontWeight="Bold"
@@ -241,82 +248,181 @@
           </Grid>
           <ComboBox Grid.Column="2" Classes="octoSelect filterSelect" ItemsSource="{Binding FilterOptions}"
                     SelectedItem="{Binding SelectedFilter}" />
-          <Button Grid.Column="3" Content="UPDATE ALL" Command="{Binding UpdateAllCommand}" />
+          <Border Grid.Column="3" Classes="viewModePicker">
+            <Grid ColumnDefinitions="Auto,Auto">
+              <Button x:Name="PatchCardViewButton" Classes="viewModeIcon" Classes.active="{Binding IsCardView}"
+                      Click="CardView_OnClick" ToolTip.Tip="Card view" AutomationProperties.Name="Card view">
+                <Canvas Width="18" Height="18">
+                  <Path Data="M 1.5,1.5 L 7.5,1.5 L 7.5,7.5 L 1.5,7.5 Z                               M 10.5,1.5 L 16.5,1.5 L 16.5,7.5 L 10.5,7.5 Z                               M 1.5,10.5 L 7.5,10.5 L 7.5,16.5 L 1.5,16.5 Z                               M 10.5,10.5 L 16.5,10.5 L 16.5,16.5 L 10.5,16.5 Z" StrokeThickness="1.4" StrokeJoin="Round" />
+                </Canvas>
+              </Button>
+              <Button x:Name="PatchListViewButton" Grid.Column="1" Classes="viewModeIcon"
+                      Classes.active="{Binding IsListView}" Click="ListView_OnClick" ToolTip.Tip="List view"
+                      AutomationProperties.Name="List view">
+                <Canvas Width="18" Height="18">
+                  <Path Data="M 1.5,2 L 4.5,2 L 4.5,5 L 1.5,5 Z                               M 1.5,7.5 L 4.5,7.5 L 4.5,10.5 L 1.5,10.5 Z                               M 1.5,13 L 4.5,13 L 4.5,16 L 1.5,16 Z" StrokeThickness="1.4" StrokeJoin="Round" />
+                  <Path Data="M 7,3.5 L 16.5,3.5 M 7,9 L 16.5,9 M 7,14.5 L 16.5,14.5" StrokeThickness="1.4" StrokeLineCap="Round" />
+                </Canvas>
+              </Button>
+            </Grid>
+          </Border>
+          <Button Grid.Column="4" Content="UPDATE ALL" Command="{Binding UpdateAllCommand}" />
         </Grid>
 
         <ScrollViewer Grid.Row="5" Margin="32,0,18,0" HorizontalScrollBarVisibility="Disabled"
                       IsVisible="{Binding IsInstallationValid}">
-          <ItemsControl ItemsSource="{Binding VisiblePatches}">
-            <ItemsControl.ItemsPanel>
-              <ItemsPanelTemplate>
-                <UniformGrid Columns="2" />
-              </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:PatchItemViewModel">
-                <Border Classes="patchCard" Classes.enabled="{Binding IsEnabled}" MinHeight="236"
-                        Margin="0,0,14,14">
-                  <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" RowSpacing="10">
-                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                      <TextBlock Text="{Binding Category}" FontSize="9" FontWeight="Bold"
-                                 LetterSpacing="1.1" Foreground="{StaticResource OctoGold}" />
-                      <TextBlock Grid.Column="1" Text="{Binding VersionText}" FontSize="10"
-                                 Foreground="{StaticResource OctoMuted}" VerticalAlignment="Center" />
-                      <Border Grid.Column="2" Classes="variantBadge">
-                        <TextBlock Text="{Binding VariantText}" FontSize="8" FontWeight="Bold"
-                                   Foreground="#C7D4DD" />
-                      </Border>
-                    </Grid>
-
-                    <TextBlock Grid.Row="1" Text="{Binding Title}" Classes="cardTitle"
-                               FontSize="17" />
-
-                    <TextBlock Grid.Row="2" Text="{Binding Description}" TextWrapping="Wrap"
-                               Classes="muted" FontSize="11" LineHeight="17" />
-
-                    <StackPanel Grid.Row="3" Spacing="6">
-                      <Border Classes="sourceTag">
-                        <TextBlock Text="{Binding SourceLabel}" FontSize="9" FontWeight="SemiBold"
-                                   LetterSpacing="0.8" Foreground="#86D3EE" />
-                      </Border>
-                      <TextBlock Text="{Binding DependencyText}" IsVisible="{Binding HasDependencies}" TextWrapping="Wrap"
-                                 FontSize="10" Foreground="#D4B46A" />
-                      <TextBlock Text="{Binding DetailMessage}" IsVisible="{Binding HasDetailMessage}" TextWrapping="Wrap"
-                                 FontSize="10" Foreground="{Binding DetailForeground}" />
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="4" Spacing="5" IsVisible="{Binding IsBusy}">
-                      <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" />
-                      <TextBlock Text="{Binding OperationText}" IsVisible="{Binding HasOperationText}" FontSize="9"
-                                 Foreground="{StaticResource OctoMuted}" />
-                    </StackPanel>
-
-                    <Grid Grid.Row="5" RowDefinitions="Auto,Auto" RowSpacing="10">
-                      <Border Height="1" Background="#2C3943" />
-                      <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="10">
-                        <Border Classes="statusBadge" Background="{Binding StatusBackground}">
-                          <TextBlock Text="{Binding StatusText}" FontSize="9" FontWeight="SemiBold"
-                                     HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <TextBlock Grid.Column="1" Text="{Binding SizeText}" FontSize="10"
+          <Grid>
+            <ItemsControl x:Name="PatchCardView" ItemsSource="{Binding VisiblePatches}" IsVisible="{Binding IsCardView}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Columns="2" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:PatchItemViewModel">
+                  <Border Classes="patchCard" Classes.enabled="{Binding IsEnabled}" MinHeight="236"
+                          Margin="0,0,14,14">
+                    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" RowSpacing="10">
+                      <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                        <TextBlock Text="{Binding Category}" FontSize="9" FontWeight="Bold"
+                                   LetterSpacing="1.1" Foreground="{StaticResource OctoGold}" />
+                        <TextBlock Grid.Column="1" Text="{Binding VersionText}" FontSize="10"
                                    Foreground="{StaticResource OctoMuted}" VerticalAlignment="Center" />
-                        <Button Grid.Column="3" Content="{Binding ActionLabel}" Command="{Binding InstallCommand}"
-                                IsVisible="{Binding ShowInstallButton}" IsEnabled="{Binding CanInstall}" />
-                        <ToggleSwitch Grid.Column="4" IsChecked="{Binding IsEnabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}"
-                                      Command="{Binding ToggleCommand}" OnContent="ON" OffContent="OFF"
-                                      VerticalAlignment="Center" />
+                        <Border Grid.Column="2" Classes="variantBadge">
+                          <TextBlock Text="{Binding VariantText}" FontSize="8" FontWeight="Bold"
+                                     Foreground="#C7D4DD" />
+                        </Border>
+                      </Grid>
+
+                      <TextBlock Grid.Row="1" Text="{Binding Title}" Classes="cardTitle"
+                                 FontSize="17" />
+
+                      <TextBlock Grid.Row="2" Text="{Binding Description}" TextWrapping="Wrap"
+                                 Classes="muted" FontSize="11" LineHeight="17" />
+
+                      <StackPanel Grid.Row="3" Spacing="6">
+                        <Border Classes="sourceTag">
+                          <TextBlock Text="{Binding SourceLabel}" FontSize="9" FontWeight="SemiBold"
+                                     LetterSpacing="0.8" Foreground="#86D3EE" />
+                        </Border>
+                        <TextBlock Text="{Binding DependencyText}" IsVisible="{Binding HasDependencies}" TextWrapping="Wrap"
+                                   FontSize="10" Foreground="#D4B46A" />
+                        <TextBlock Text="{Binding DetailMessage}" IsVisible="{Binding HasDetailMessage}" TextWrapping="Wrap"
+                                   FontSize="10" Foreground="{Binding DetailForeground}" />
+                      </StackPanel>
+
+                      <StackPanel Grid.Row="4" Spacing="5" IsVisible="{Binding IsBusy}">
+                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" />
+                        <TextBlock Text="{Binding OperationText}" IsVisible="{Binding HasOperationText}" FontSize="9"
+                                   Foreground="{StaticResource OctoMuted}" />
+                      </StackPanel>
+
+                      <Grid Grid.Row="5" RowDefinitions="Auto,Auto" RowSpacing="10">
+                        <Border Height="1" Background="#2C3943" />
+                        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="10">
+                          <Border Classes="statusBadge" Background="{Binding StatusBackground}" BorderBrush="{Binding StatusBorderBrush}"
+                                  ToolTip.Tip="{Binding StatusText}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+                              <TextBlock Text="{Binding StatusGlyph}" FontSize="10" FontWeight="Bold"
+                                         Foreground="{Binding StatusForeground}" VerticalAlignment="Center" />
+                              <TextBlock Grid.Column="1" Text="{Binding StatusBadgeText}" FontSize="8"
+                                         FontWeight="Bold" LetterSpacing="0.6" Foreground="{Binding StatusForeground}"
+                                         VerticalAlignment="Center" />
+                            </Grid>
+                          </Border>
+                          <TextBlock Grid.Column="1" Text="{Binding SizeText}" FontSize="10"
+                                     Foreground="{StaticResource OctoMuted}" VerticalAlignment="Center" />
+                          <Button Grid.Column="3" Content="{Binding ActionLabel}" Command="{Binding InstallCommand}"
+                                  IsVisible="{Binding ShowInstallButton}" IsEnabled="{Binding CanInstall}" />
+                          <ToggleSwitch Grid.Column="4" IsChecked="{Binding IsEnabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}"
+                                        Command="{Binding ToggleCommand}" OnContent="ON" OffContent="OFF"
+                                        VerticalAlignment="Center" />
+                        </Grid>
                       </Grid>
                     </Grid>
-                  </Grid>
-                </Border>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <ItemsControl x:Name="PatchListView" ItemsSource="{Binding VisiblePatches}" IsVisible="{Binding IsListView}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:PatchItemViewModel">
+                  <Border Classes="patchListItem" Classes.enabled="{Binding IsEnabled}" Margin="0,0,14,10">
+                    <Grid RowDefinitions="Auto,Auto" RowSpacing="10">
+                      <Grid ColumnDefinitions="98,*,82,96,Auto" ColumnSpacing="14">
+                        <StackPanel Spacing="7" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding Category}" FontSize="9" FontWeight="Bold"
+                                     LetterSpacing="1.1" Foreground="{StaticResource OctoGold}" TextTrimming="CharacterEllipsis"
+                                     ToolTip.Tip="{Binding Category}" />
+                          <Border Classes="sourceTag" MaxWidth="98">
+                            <TextBlock Text="{Binding SourceLabel}" FontSize="9" FontWeight="SemiBold"
+                                       LetterSpacing="0.8" Foreground="#86D3EE" TextTrimming="CharacterEllipsis"
+                                       ToolTip.Tip="{Binding SourceLabel}" />
+                          </Border>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Spacing="4" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding Title}" Classes="cardTitle" FontSize="14"
+                                     TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Title}" />
+                          <TextBlock Text="{Binding Description}" Classes="muted" FontSize="10"
+                                     TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Description}" />
+                          <TextBlock Text="{Binding DependencyText}" IsVisible="{Binding HasDependencies}" TextTrimming="CharacterEllipsis"
+                                     FontSize="9" Foreground="#D4B46A" ToolTip.Tip="{Binding DependencyText}" />
+                          <TextBlock Text="{Binding DetailMessage}" IsVisible="{Binding HasDetailMessage}" TextTrimming="CharacterEllipsis"
+                                     FontSize="9" Foreground="{Binding DetailForeground}" ToolTip.Tip="{Binding DetailMessage}" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Spacing="6" VerticalAlignment="Center">
+                          <TextBlock Text="{Binding VersionText}" FontSize="10" Foreground="{StaticResource OctoMuted}"
+                                     TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding VersionText}" />
+                          <Border Classes="variantBadge" MaxWidth="82">
+                            <TextBlock Text="{Binding VariantText}" FontSize="8" FontWeight="Bold"
+                                       Foreground="#C7D4DD" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding VariantText}" />
+                          </Border>
+                          <TextBlock Text="{Binding SizeText}" FontSize="9" Foreground="{StaticResource OctoMuted}"
+                                     TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+
+                        <Border Grid.Column="3" Classes="statusBadge" Background="{Binding StatusBackground}"
+                                BorderBrush="{Binding StatusBorderBrush}" HorizontalAlignment="Left" ToolTip.Tip="{Binding StatusText}">
+                          <Grid ColumnDefinitions="Auto,*" ColumnSpacing="5">
+                            <TextBlock Text="{Binding StatusGlyph}" FontSize="10" FontWeight="Bold"
+                                       Foreground="{Binding StatusForeground}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Text="{Binding StatusBadgeText}" FontSize="8"
+                                       FontWeight="Bold" LetterSpacing="0.6" Foreground="{Binding StatusForeground}"
+                                       VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                          </Grid>
+                        </Border>
+
+                        <StackPanel Grid.Column="4" Orientation="Horizontal" Spacing="10"
+                                    VerticalAlignment="Center">
+                          <Button Classes="compact" MaxWidth="122" Command="{Binding InstallCommand}"
+                                  IsVisible="{Binding ShowInstallButton}" IsEnabled="{Binding CanInstall}" ToolTip.Tip="{Binding ActionLabel}"
+                                  ToolTip.ShowOnDisabled="True">
+                            <TextBlock Text="{Binding ActionLabel}" MaxWidth="96" TextTrimming="CharacterEllipsis" />
+                          </Button>
+                          <ToggleSwitch IsChecked="{Binding IsEnabled, Mode=OneWay}" IsEnabled="{Binding CanToggle}" Command="{Binding ToggleCommand}"
+                                        OnContent="ON" OffContent="OFF" VerticalAlignment="Center" />
+                        </StackPanel>
+                      </Grid>
+
+                      <StackPanel Grid.Row="1" Spacing="5" IsVisible="{Binding IsBusy}">
+                        <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" />
+                        <TextBlock Text="{Binding OperationText}" IsVisible="{Binding HasOperationText}" FontSize="9"
+                                   Foreground="{StaticResource OctoMuted}" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding OperationText}"
+                                   ToolTip.ShowOnDisabled="True" />
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Grid>
         </ScrollViewer>
       </Grid>
     </Grid>
 
-    <Grid x:Name="ChangelogOverlay" Panel.ZIndex="100" Background="#C7080D13"
+    <Grid x:Name="ChangelogOverlay" ZIndex="100" Background="#C7080D13"
           IsVisible="{Binding IsChangelogOpen}" KeyboardNavigation.TabNavigation="Cycle">
       <Border Classes="changelogPanel" Width="720" MaxHeight="560"
               Margin="36" HorizontalAlignment="Center" VerticalAlignment="Center">

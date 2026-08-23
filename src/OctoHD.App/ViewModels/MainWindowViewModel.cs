@@ -21,6 +21,7 @@ public sealed class MainWindowViewModel : ObservableObject
     private string _statusMessage = "Select your OctoWoW folder or its Data folder to get started.";
     private string _searchText = string.Empty;
     private string _selectedFilter = "All patches";
+    private bool _isListView;
     private bool _isBusy;
     private bool _isInstallationValid;
     private bool _initialized;
@@ -132,7 +133,7 @@ public sealed class MainWindowViewModel : ObservableObject
         }
     }
 
-    public bool IsMainContentEnabled => !IsChangelogOpen;
+    public bool IsMainContentEnabled => !IsChangelogOpen && !IsBusy;
 
     public bool IsUpdateReady
     {
@@ -251,6 +252,20 @@ public sealed class MainWindowViewModel : ObservableObject
         }
     }
 
+    public bool IsListView
+    {
+        get => _isListView;
+        private set
+        {
+            if (SetProperty(ref _isListView, value))
+            {
+                OnPropertyChanged(nameof(IsCardView));
+            }
+        }
+    }
+
+    public bool IsCardView => !IsListView;
+
     public string StatusMessage
     {
         get => _statusMessage;
@@ -272,6 +287,7 @@ public sealed class MainWindowViewModel : ObservableObject
         {
             if (SetProperty(ref _isBusy, value))
             {
+                OnPropertyChanged(nameof(IsMainContentEnabled));
                 RefreshCommand.NotifyCanExecuteChanged();
                 UpdateAllCommand.NotifyCanExecuteChanged();
                 LaunchCommand.NotifyCanExecuteChanged();
@@ -305,6 +321,7 @@ public sealed class MainWindowViewModel : ObservableObject
         {
             var settings = await _settingsStore.LoadAsync();
             RestorePatchSources(settings);
+            IsListView = settings.IsListView;
             _settingsReady = true;
             if (!string.IsNullOrWhiteSpace(settings.DataFolder) && Directory.Exists(settings.DataFolder))
             {
@@ -412,11 +429,35 @@ public sealed class MainWindowViewModel : ObservableObject
             return;
         }
 
+        IsBusy = true;
         item.BeginOperation("Preparing download…");
         StatusMessage = $"Downloading {item.Title} from {SelectedPatchSource.DisplayName}.";
+        var progressItems = new HashSet<PatchItemViewModel> { item };
         try
         {
-            var progress = new Progress<PatchOperationProgress>(item.ApplyProgress);
+            var progress = new Progress<PatchOperationProgress>(operation =>
+            {
+                var operationItem = Patches.FirstOrDefault(candidate => string.Equals(
+                    candidate.Definition.Id,
+                    operation.PatchId,
+                    StringComparison.OrdinalIgnoreCase));
+                var isDependency = operationItem is not null
+                    && !string.Equals(
+                        operationItem.Definition.Id,
+                        item.Definition.Id,
+                        StringComparison.OrdinalIgnoreCase);
+                var progressItem = operationItem ?? item;
+                var context = isDependency ? $"Required by {FormatPatchName(item.Definition)}" : null;
+                if (progressItems.Add(progressItem))
+                {
+                    progressItem.BeginOperation(context ?? "Preparing download…");
+                }
+
+                progressItem.ApplyProgress(operation, context);
+                StatusMessage = isDependency
+                    ? $"Installing required patch {FormatPatchName(operationItem!.Definition)} for {item.Title}."
+                    : $"Downloading {item.Title} from {SelectedPatchSource.DisplayName}.";
+            });
             var results = await _manager.InstallAsync(
                 _dataFolder,
                 item.Definition,
@@ -427,8 +468,21 @@ public sealed class MainWindowViewModel : ObservableObject
         }
         catch (Exception exception)
         {
+            var refreshed = await RefreshPatchStatesAfterFailureAsync();
+            if (!refreshed)
+            {
+                foreach (var progressItem in progressItems.Where(candidate => candidate != item))
+                {
+                    progressItem.EndWithError(exception.Message);
+                }
+            }
+
             item.EndWithError(exception.Message);
             StatusMessage = exception.Message;
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
@@ -440,6 +494,7 @@ public sealed class MainWindowViewModel : ObservableObject
         }
 
         var enable = !item.IsEnabled;
+        IsBusy = true;
         item.BeginOperation(enable ? "Enabling…" : "Disabling…");
         try
         {
@@ -449,8 +504,33 @@ public sealed class MainWindowViewModel : ObservableObject
         }
         catch (Exception exception)
         {
+            await RefreshPatchStatesAfterFailureAsync();
             item.EndWithError(exception.Message);
             StatusMessage = exception.Message;
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task<bool> RefreshPatchStatesAfterFailureAsync()
+    {
+        if (_dataFolder is null)
+        {
+            return false;
+        }
+
+        try
+        {
+            var results = await _scanner.ScanAsync(_dataFolder);
+            ApplyResults(results);
+            return true;
+        }
+        catch
+        {
+            // Preserve the original operation error if the follow-up scan also fails.
+            return false;
         }
     }
 
@@ -546,8 +626,25 @@ public sealed class MainWindowViewModel : ObservableObject
             : $"{SelectedPatchSource.DisplayName} is now active. Custom sources are trusted by URL and MPQ validation.";
     }
 
+    public async Task SetPatchViewModeAsync(bool isListView)
+    {
+        if (IsListView == isListView)
+        {
+            return;
+        }
+
+        IsListView = isListView;
+        if (_settingsReady)
+        {
+            await SaveSettingsAsync();
+        }
+    }
+
     public void ReportSettingsError(string message) =>
         StatusMessage = $"Patch source settings could not be saved: {message}";
+
+    public void ReportViewPreferenceError(string message) =>
+        StatusMessage = $"The patch library view preference could not be saved: {message}";
 
     public void ReportExternalLinkError(string message) =>
         StatusMessage = $"The website could not be opened: {message}";
@@ -653,6 +750,7 @@ public sealed class MainWindowViewModel : ObservableObject
     {
         DataFolder = _dataFolder,
         SelectedPatchSourceId = SelectedPatchSource.Id,
+        IsListView = IsListView,
         PatchSources = PatchSources
             .Where(source => !source.IsOfficial)
             .Select(source => new CustomPatchSourceSettings(
@@ -673,6 +771,9 @@ public sealed class MainWindowViewModel : ObservableObject
 
         RaiseSummary();
     }
+
+    private static string FormatPatchName(PatchDefinition patch) =>
+        patch.VariantName is null ? patch.DisplayName : $"{patch.DisplayName} ({patch.VariantName})";
 
     private void RaiseSummary()
     {

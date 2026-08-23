@@ -14,6 +14,7 @@ public sealed class AppSettingsStoreTests
 
         Assert.Null(settings.DataFolder);
         Assert.Null(settings.SelectedPatchSourceId);
+        Assert.False(settings.IsListView);
         Assert.Empty(settings.PatchSources);
     }
 
@@ -26,6 +27,7 @@ public sealed class AppSettingsStoreTests
         {
             DataFolder = installation.DataPath,
             SelectedPatchSourceId = "custom-one",
+            IsListView = true,
             PatchSources =
             [
                 new CustomPatchSourceSettings("custom-one", "Custom One", "https://example.test/patches/")
@@ -37,11 +39,33 @@ public sealed class AppSettingsStoreTests
 
         Assert.Equal(expected.DataFolder, actual.DataFolder);
         Assert.Equal(expected.SelectedPatchSourceId, actual.SelectedPatchSourceId);
+        Assert.Equal(expected.IsListView, actual.IsListView);
         var source = Assert.Single(actual.PatchSources);
         Assert.Equal(expected.PatchSources[0], source);
         Assert.DoesNotContain(
             Directory.EnumerateFiles(installation.RootPath),
             path => path.EndsWith(".tmp", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Legacy_settings_without_view_mode_default_to_cards()
+    {
+        using var installation = new TemporaryInstallation();
+        await File.WriteAllTextAsync(
+            installation.SettingsPath,
+            """
+            {
+              "selectedPatchSourceId": "project-reforged",
+              "patchSources": []
+            }
+            """,
+            TestContext.Current.CancellationToken);
+        var store = new AppSettingsStore(installation.SettingsPath);
+
+        var settings = await store.LoadAsync(TestContext.Current.CancellationToken);
+
+        Assert.False(settings.IsListView);
+        Assert.Equal("project-reforged", settings.SelectedPatchSourceId);
     }
 
     [Fact]
@@ -56,6 +80,7 @@ public sealed class AppSettingsStoreTests
 
         var settings = await store.LoadAsync(TestContext.Current.CancellationToken);
 
+        Assert.False(settings.IsListView);
         Assert.Empty(settings.PatchSources);
     }
 }

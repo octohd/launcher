@@ -25,8 +25,8 @@
       <GradientStop Color="#7820272F" Offset="1" />
     </LinearGradientBrush>
     <SolidColorBrush x:Key="OctoBackground">#0D1117</SolidColorBrush>
-    <SolidColorBrush x:Key="OctoSurface">#ED141B22</SolidColorBrush>
-    <SolidColorBrush x:Key="OctoSurfaceRaised">#FA1A232C</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoSurface">#CC141B22</SolidColorBrush>
+    <SolidColorBrush x:Key="OctoSurfaceRaised">#E01A232C</SolidColorBrush>
     <SolidColorBrush x:Key="OctoGold">#E3A13A</SolidColorBrush>
     <SolidColorBrush x:Key="OctoGoldBright">#FFC55E</SolidColorBrush>
     <SolidColorBrush x:Key="OctoBlue">#3695BE</SolidColorBrush>
@@ -271,7 +271,7 @@
     </Style>
 
     <Style Selector="Border.contextPanel">
-      <Setter Property="Background" Value="#F0181F27" />
+      <Setter Property="Background" Value="{StaticResource OctoSurface}" />
       <Setter Property="BorderBrush" Value="#3C4B57" />
       <Setter Property="BorderThickness" Value="1" />
       <Setter Property="CornerRadius" Value="10" />
@@ -347,9 +347,32 @@
       <Setter Property="BorderBrush" Value="#D59A43" />
     </Style>
 
+    <Style Selector="Border.patchListItem">
+      <Setter Property="Background" Value="{StaticResource OctoSurface}" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="9" />
+      <Setter Property="Padding" Value="15,13" />
+      <Setter Property="BoxShadow" Value="0 6 18 0 #52000000" />
+    </Style>
+
+    <Style Selector="Border.patchListItem:pointerover">
+      <Setter Property="BorderBrush" Value="#9A7840" />
+      <Setter Property="Background" Value="{StaticResource OctoSurfaceRaised}" />
+    </Style>
+
+    <Style Selector="Border.patchListItem.enabled">
+      <Setter Property="BorderBrush" Value="#806238" />
+    </Style>
+
+    <Style Selector="Border.patchListItem.enabled:pointerover">
+      <Setter Property="BorderBrush" Value="#D59A43" />
+    </Style>
+
     <Style Selector="Border.statusBadge">
       <Setter Property="CornerRadius" Value="11" />
-      <Setter Property="Padding" Value="{OnPlatform Default='9,2', macOS='9,3,9,1', x:TypeArguments=Thickness}" />
+      <Setter Property="Padding" Value="{OnPlatform Default='8,4', macOS='8,5,8,3', x:TypeArguments=Thickness}" />
+      <Setter Property="BorderThickness" Value="1" />
       <Setter Property="MinHeight" Value="22" />
       <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
@@ -527,6 +550,54 @@
 
     <Style Selector="ToggleSwitch:checked /template/ Ellipse#SwitchKnobOn">
       <Setter Property="Fill" Value="#FFF8EC" />
+    </Style>
+
+    <Style Selector="Border.viewModePicker">
+      <Setter Property="Background" Value="#D9161D25" />
+      <Setter Property="BorderBrush" Value="{StaticResource OctoBorder}" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="7" />
+      <Setter Property="Padding" Value="2" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon">
+      <Setter Property="Width" Value="34" />
+      <Setter Property="Height" Value="34" />
+      <Setter Property="MinHeight" Value="34" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="CornerRadius" Value="5" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="AutomationProperties.ItemStatus" Value="Not selected" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon:pointerover">
+      <Setter Property="Background" Value="#B52B3540" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon:pressed">
+      <Setter Property="Background" Value="#C23A2B1B" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon.active">
+      <Setter Property="Background" Value="#D43A2B1B" />
+      <Setter Property="AutomationProperties.ItemStatus" Value="Selected" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon Path">
+      <Setter Property="Stroke" Value="{StaticResource OctoMuted}" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon:pointerover Path">
+      <Setter Property="Stroke" Value="{StaticResource OctoHeading}" />
+    </Style>
+
+    <Style Selector="Button.viewModeIcon.active Path">
+      <Setter Property="Stroke" Value="{StaticResource OctoGoldBright}" />
     </Style>
 
     <Style Selector="TextBlock.muted">

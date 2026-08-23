@@ -9,6 +9,8 @@ public sealed class AppSettings
 
     public string? SelectedPatchSourceId { get; init; }
 
+    public bool IsListView { get; init; }
+
     public List<CustomPatchSourceSettings> PatchSources { get; init; } = [];
 }
 

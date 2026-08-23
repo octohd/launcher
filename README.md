@@ -34,6 +34,7 @@ No manual renaming. No duplicate downloads. No hunting through the `Data` direct
 
 - **Made for OctoWoW** — select either the OctoWoW folder or its `Data` folder and let OctoHD resolve the correct location.
 - **One-click patch control** — install, enable, disable, or reinstall individual HD patches from a visual library.
+- **Automatic dependencies** — required patches are downloaded and enabled before the patch that needs them.
 - **Smart startup scan** — existing active and disabled patches are detected before the library is shown.
 - **Direct downloads** — Project Reforged is the verified default source; OctoHD does not mirror patch files.
 - **Custom patch sources** — add a public HTTPS or S3-compatible bucket without changing the app.

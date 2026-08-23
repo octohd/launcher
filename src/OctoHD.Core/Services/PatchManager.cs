@@ -48,72 +48,29 @@ public sealed class PatchManager
         {
             EnsureCatalogPatch(patch);
             source ??= PatchSourceDefinition.ProjectReforged;
-            var downloadUri = source.Resolve(patch);
-            EnsureAllowedUri(downloadUri, source);
             EnsureDataFolder(dataFolder);
             var scanResults = await _scanner.ScanAsync(dataFolder, cancellationToken).ConfigureAwait(false);
-            EnsureDependenciesAreActive(patch, scanResults);
-
-            var targetGroup = scanResults
-                .Where(result => string.Equals(result.Patch.TargetFileName, patch.TargetFileName, StringComparison.OrdinalIgnoreCase))
-                .ToArray();
-            var blocker = targetGroup.FirstOrDefault(result =>
-                result.Status is PatchStatus.Conflict or PatchStatus.ForeignFile or PatchStatus.Corrupt);
-            if (blocker is not null)
+            var dependencies = _dependencyService.GetDependenciesInInstallOrder(patch);
+            _ = GetInstallContext(dataFolder, patch, scanResults, source);
+            foreach (var dependency in dependencies)
             {
-                throw new PatchOperationException(blocker.Message ?? "The target name is occupied by a file that OctoHD cannot manage.");
+                scanResults = await EnsureDependencyIsActiveAsync(
+                    dataFolder,
+                    dependency,
+                    scanResults,
+                    progress,
+                    source,
+                    cancellationToken).ConfigureAwait(false);
             }
 
-            var currentlyInstalled = targetGroup.FirstOrDefault(result => result.CanToggle);
-            if (currentlyInstalled is not null
-                && !string.Equals(currentlyInstalled.Patch.Id, patch.Id, StringComparison.OrdinalIgnoreCase))
-            {
-                var blockedDependents = _dependencyService
-                    .GetActiveDependents(currentlyInstalled.Patch, scanResults)
-                    .Where(dependent => !dependent.Dependencies.Contains(patch.Id, StringComparer.OrdinalIgnoreCase))
-                    .ToArray();
-                if (blockedDependents.Length > 0)
-                {
-                    throw new PatchOperationException(
-                        $"The variant cannot be changed while {FormatNames(blockedDependents)} is enabled.");
-                }
-            }
-
-            EnsureFreeSpace(dataFolder, patch.ExpectedSize);
-            var metadataDirectory = JsonPatchStateStore.GetMetadataDirectory(dataFolder);
-            var temporaryDirectory = Path.Combine(metadataDirectory, "tmp");
-            Directory.CreateDirectory(temporaryDirectory);
-            var partPath = Path.Combine(temporaryDirectory, $"{patch.Id}.mpq.part");
-            var partMetadataPath = $"{partPath}.etag";
-
-            var resumeEtag = await PreparePartFileAsync(
-                partPath,
-                partMetadataPath,
-                patch,
-                source,
-                downloadUri,
-                cancellationToken).ConfigureAwait(false);
-            var download = await DownloadAsync(
-                patch,
-                source,
-                downloadUri,
+            return await InstallSingleAsync(
                 dataFolder,
-                partPath,
-                partMetadataPath,
-                resumeEtag,
+                patch,
+                scanResults,
                 progress,
-                cancellationToken).ConfigureAwait(false);
-            await InstallValidatedFileAsync(
-                dataFolder,
-                patch,
                 source,
-                partPath,
-                partMetadataPath,
-                download,
-                currentlyInstalled?.Status is not PatchStatus.Disabled and not PatchStatus.UpdateAvailableDisabled,
+                ensureEnabled: false,
                 cancellationToken).ConfigureAwait(false);
-
-            return await _scanner.ScanAsync(dataFolder, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
@@ -133,82 +90,232 @@ public sealed class PatchManager
             EnsureCatalogPatch(patch);
             EnsureDataFolder(dataFolder);
             var scanResults = await _scanner.ScanAsync(dataFolder, cancellationToken).ConfigureAwait(false);
-            var selected = scanResults.First(result => string.Equals(result.Patch.Id, patch.Id, StringComparison.OrdinalIgnoreCase));
-            if (!selected.CanToggle)
-            {
-                throw new PatchOperationException(selected.Message ?? "This patch cannot be toggled in its current state.");
-            }
-
-            if (selected.IsActive == enabled)
-            {
-                return scanResults;
-            }
-
-            if (enabled)
-            {
-                EnsureDependenciesAreActive(patch, scanResults);
-            }
-            else
-            {
-                var dependents = _dependencyService.GetActiveDependents(patch, scanResults);
-                if (dependents.Count > 0)
-                {
-                    throw new PatchOperationException(
-                        $"Disable dependent patches first: {FormatNames(dependents)}.");
-                }
-            }
-
-            var activePath = PatchFileNames.ResolveInsideDataFolder(dataFolder, patch.TargetFileName);
-            var disabledPath = Path.Combine(dataFolder, patch.DisabledFileName);
-            var sourcePath = enabled ? disabledPath : activePath;
-            var destinationPath = enabled ? activePath : disabledPath;
-            if (!File.Exists(sourcePath) || File.Exists(destinationPath))
-            {
-                throw new PatchOperationException("The patch state changed while toggling. Please scan again.");
-            }
-
-            var state = await _stateStore.LoadAsync(dataFolder, cancellationToken).ConfigureAwait(false);
-            var existingRecord = FindRecord(state, patch.TargetFileName);
-            var sha256 = existingRecord?.Sha256;
-            if (string.IsNullOrWhiteSpace(sha256))
-            {
-                sha256 = await _hashService.ComputeSha256Async(sourcePath, cancellationToken).ConfigureAwait(false);
-            }
-
-            File.Move(sourcePath, destinationPath, false);
-            try
-            {
-                RemoveTargetGroupRecords(state, patch.TargetFileName);
-                var fileInfo = new FileInfo(destinationPath);
-                state.Patches[patch.Id] = new InstalledPatchRecord(
-                    patch.Id,
-                    existingRecord?.SourceVersion ?? patch.Version,
-                    patch.TargetFileName,
-                    enabled,
-                    fileInfo.Length,
-                    sha256,
-                    existingRecord?.ETag ?? patch.ETag,
-                    existingRecord?.InstalledAtUtc ?? DateTimeOffset.UtcNow,
-                    fileInfo.LastWriteTimeUtc,
-                    existingRecord?.DownloadSourceId);
-                await _stateStore.SaveAsync(dataFolder, state, cancellationToken).ConfigureAwait(false);
-            }
-            catch
-            {
-                if (File.Exists(destinationPath) && !File.Exists(sourcePath))
-                {
-                    File.Move(destinationPath, sourcePath, false);
-                }
-
-                throw;
-            }
-
-            return await _scanner.ScanAsync(dataFolder, cancellationToken).ConfigureAwait(false);
+            return await SetEnabledSingleAsync(
+                dataFolder,
+                patch,
+                enabled,
+                scanResults,
+                cancellationToken).ConfigureAwait(false);
         }
         finally
         {
             _operationLock.Release();
         }
+    }
+
+    private async Task<IReadOnlyList<PatchScanResult>> EnsureDependencyIsActiveAsync(
+        string dataFolder,
+        PatchDefinition dependency,
+        IReadOnlyList<PatchScanResult> scanResults,
+        IProgress<PatchOperationProgress>? progress,
+        PatchSourceDefinition source,
+        CancellationToken cancellationToken)
+    {
+        var selected = scanResults.First(result =>
+            string.Equals(result.Patch.Id, dependency.Id, StringComparison.OrdinalIgnoreCase));
+        if (selected.IsActive)
+        {
+            return scanResults;
+        }
+
+        try
+        {
+            return selected.Status switch
+            {
+                PatchStatus.Disabled or PatchStatus.UpdateAvailableDisabled =>
+                    await SetEnabledSingleAsync(
+                        dataFolder,
+                        dependency,
+                        true,
+                        scanResults,
+                        cancellationToken).ConfigureAwait(false),
+                PatchStatus.NotInstalled => await InstallSingleAsync(
+                    dataFolder,
+                    dependency,
+                    scanResults,
+                    progress,
+                    source,
+                    ensureEnabled: true,
+                    cancellationToken).ConfigureAwait(false),
+                _ => throw new PatchOperationException(
+                    selected.Message ?? "The patch cannot be installed or enabled in its current state.")
+            };
+        }
+        catch (Exception exception) when (exception is PatchOperationException or HttpRequestException)
+        {
+            throw new PatchOperationException(
+                $"Required patch {FormatNames([dependency])} could not be prepared: {exception.Message}",
+                exception);
+        }
+    }
+
+    private async Task<IReadOnlyList<PatchScanResult>> InstallSingleAsync(
+        string dataFolder,
+        PatchDefinition patch,
+        IReadOnlyList<PatchScanResult> scanResults,
+        IProgress<PatchOperationProgress>? progress,
+        PatchSourceDefinition source,
+        bool ensureEnabled,
+        CancellationToken cancellationToken)
+    {
+        var installContext = GetInstallContext(dataFolder, patch, scanResults, source);
+        EnsureDependenciesAreActive(patch, scanResults);
+        var metadataDirectory = JsonPatchStateStore.GetMetadataDirectory(dataFolder);
+        var temporaryDirectory = Path.Combine(metadataDirectory, "tmp");
+        Directory.CreateDirectory(temporaryDirectory);
+        var partPath = Path.Combine(temporaryDirectory, $"{patch.Id}.mpq.part");
+        var partMetadataPath = $"{partPath}.etag";
+
+        var resumeEtag = await PreparePartFileAsync(
+            partPath,
+            partMetadataPath,
+            patch,
+            source,
+            installContext.DownloadUri,
+            cancellationToken).ConfigureAwait(false);
+        var download = await DownloadAsync(
+            patch,
+            source,
+            installContext.DownloadUri,
+            dataFolder,
+            partPath,
+            partMetadataPath,
+            resumeEtag,
+            progress,
+            cancellationToken).ConfigureAwait(false);
+        var active = ensureEnabled
+            || installContext.CurrentlyInstalled?.Status is not PatchStatus.Disabled
+                and not PatchStatus.UpdateAvailableDisabled;
+        await InstallValidatedFileAsync(
+            dataFolder,
+            patch,
+            source,
+            partPath,
+            partMetadataPath,
+            download,
+            active,
+            cancellationToken).ConfigureAwait(false);
+
+        return await _scanner.ScanAsync(dataFolder, cancellationToken).ConfigureAwait(false);
+    }
+
+    private InstallContext GetInstallContext(
+        string dataFolder,
+        PatchDefinition patch,
+        IReadOnlyList<PatchScanResult> scanResults,
+        PatchSourceDefinition source)
+    {
+        var downloadUri = source.Resolve(patch);
+        EnsureAllowedUri(downloadUri, source);
+
+        var targetGroup = scanResults
+            .Where(result => string.Equals(result.Patch.TargetFileName, patch.TargetFileName, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        var blocker = targetGroup.FirstOrDefault(result =>
+            result.Status is PatchStatus.Conflict or PatchStatus.ForeignFile or PatchStatus.Corrupt);
+        if (blocker is not null)
+        {
+            throw new PatchOperationException(blocker.Message ?? "The target name is occupied by a file that OctoHD cannot manage.");
+        }
+
+        var currentlyInstalled = targetGroup.FirstOrDefault(result => result.CanToggle);
+        if (currentlyInstalled is not null
+            && !string.Equals(currentlyInstalled.Patch.Id, patch.Id, StringComparison.OrdinalIgnoreCase))
+        {
+            var blockedDependents = _dependencyService
+                .GetActiveDependents(currentlyInstalled.Patch, scanResults)
+                .Where(dependent => !dependent.Dependencies.Contains(patch.Id, StringComparer.OrdinalIgnoreCase))
+                .ToArray();
+            if (blockedDependents.Length > 0)
+            {
+                throw new PatchOperationException(
+                    $"The variant cannot be changed while {FormatNames(blockedDependents)} is enabled.");
+            }
+        }
+
+        EnsureFreeSpace(dataFolder, patch.ExpectedSize);
+        return new InstallContext(downloadUri, currentlyInstalled);
+    }
+
+    private async Task<IReadOnlyList<PatchScanResult>> SetEnabledSingleAsync(
+        string dataFolder,
+        PatchDefinition patch,
+        bool enabled,
+        IReadOnlyList<PatchScanResult> scanResults,
+        CancellationToken cancellationToken)
+    {
+        var selected = scanResults.First(result =>
+            string.Equals(result.Patch.Id, patch.Id, StringComparison.OrdinalIgnoreCase));
+        if (!selected.CanToggle)
+        {
+            throw new PatchOperationException(selected.Message ?? "This patch cannot be toggled in its current state.");
+        }
+
+        if (selected.IsActive == enabled)
+        {
+            return scanResults;
+        }
+
+        if (enabled)
+        {
+            EnsureDependenciesAreActive(patch, scanResults);
+        }
+        else
+        {
+            var dependents = _dependencyService.GetActiveDependents(patch, scanResults);
+            if (dependents.Count > 0)
+            {
+                throw new PatchOperationException(
+                    $"Disable dependent patches first: {FormatNames(dependents)}.");
+            }
+        }
+
+        var activePath = PatchFileNames.ResolveInsideDataFolder(dataFolder, patch.TargetFileName);
+        var disabledPath = Path.Combine(dataFolder, patch.DisabledFileName);
+        var sourcePath = enabled ? disabledPath : activePath;
+        var destinationPath = enabled ? activePath : disabledPath;
+        if (!File.Exists(sourcePath) || File.Exists(destinationPath))
+        {
+            throw new PatchOperationException("The patch state changed while toggling. Please scan again.");
+        }
+
+        var state = await _stateStore.LoadAsync(dataFolder, cancellationToken).ConfigureAwait(false);
+        var existingRecord = FindRecord(state, patch.TargetFileName);
+        var sha256 = existingRecord?.Sha256;
+        if (string.IsNullOrWhiteSpace(sha256))
+        {
+            sha256 = await _hashService.ComputeSha256Async(sourcePath, cancellationToken).ConfigureAwait(false);
+        }
+
+        File.Move(sourcePath, destinationPath, false);
+        try
+        {
+            RemoveTargetGroupRecords(state, patch.TargetFileName);
+            var fileInfo = new FileInfo(destinationPath);
+            state.Patches[patch.Id] = new InstalledPatchRecord(
+                patch.Id,
+                existingRecord?.SourceVersion ?? patch.Version,
+                patch.TargetFileName,
+                enabled,
+                fileInfo.Length,
+                sha256,
+                existingRecord?.ETag ?? patch.ETag,
+                existingRecord?.InstalledAtUtc ?? DateTimeOffset.UtcNow,
+                fileInfo.LastWriteTimeUtc,
+                existingRecord?.DownloadSourceId);
+            await _stateStore.SaveAsync(dataFolder, state, cancellationToken).ConfigureAwait(false);
+        }
+        catch
+        {
+            if (File.Exists(destinationPath) && !File.Exists(sourcePath))
+            {
+                File.Move(destinationPath, sourcePath, false);
+            }
+
+            throw;
+        }
+
+        return await _scanner.ScanAsync(dataFolder, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<string?> PreparePartFileAsync(
@@ -632,6 +739,8 @@ public sealed class PatchManager
             metadataPath,
             string.IsNullOrWhiteSpace(etag) ? [fingerprint] : [fingerprint, etag],
             cancellationToken);
+
+    private sealed record InstallContext(Uri DownloadUri, PatchScanResult? CurrentlyInstalled);
 
     private sealed record DownloadResult(string Sha256, string ETag);
 }
