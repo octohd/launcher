@@ -10,5 +10,9 @@ public sealed class TestAppBuilder
 {
     public static AppBuilder BuildAvaloniaApp() =>
         AppBuilder.Configure<OctoHD.App.App>()
-            .UseHeadless(new AvaloniaHeadlessPlatformOptions());
+            .UseSkia()
+            .UseHeadless(new AvaloniaHeadlessPlatformOptions
+            {
+                UseHeadlessDrawing = false
+            });
 }

@@ -7,7 +7,7 @@
     <Product>OctoHD Launcher</Product>
     <Description>OctoWoW HD patch launcher</Description>
     <Authors>OctoHD</Authors>
-    <Version>1.0.5</Version>
+    <Version>1.0.6</Version>
     <OctoHDUpdateRepository Condition="'$(OctoHDUpdateRepository)' == ''"></OctoHDUpdateRepository>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <IsAotCompatible>true</IsAotCompatible>
@@ -20,6 +20,7 @@
     <PackageReference Include="Avalonia.Desktop" Version="12.1.1" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.1" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.1" />
+    <PackageReference Include="Avalonia.Wayland" Version="12.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OctoHD.Core\OctoHD.Core.csproj" />

@@ -149,6 +149,16 @@
           "Avalonia": "12.1.1"
         }
       },
+      "Avalonia.Wayland": {
+        "type": "Transitive",
+        "resolved": "12.1.1",
+        "contentHash": "uRTHKag0Hlz5LeZc7TAVnpxG4eQFykMuGd4K8UpjPVCMf35jRmFw+yAF0t+bsoDbVoWIy/nA+mlYgc2Gi1l7JQ==",
+        "dependencies": {
+          "Avalonia": "12.1.1",
+          "Avalonia.FreeDesktop": "12.1.1",
+          "NWayland": "0.11.0"
+        }
+      },
       "Avalonia.Win32": {
         "type": "Transitive",
         "resolved": "12.1.1",
@@ -329,6 +339,11 @@
         "resolved": "5.0.0",
         "contentHash": "dDoKi0PnDz31yAyETfRntsLArTlVAVzUzCIvvEDsDsucrl33Dl8pIJG06ePTJTI3tGpeyHS9Cq7Foc/s4EeKcg=="
       },
+      "NWayland": {
+        "type": "Transitive",
+        "resolved": "0.11.0",
+        "contentHash": "sTqw0WWcFd/UsF9JoWDn76+2CrCMrNZgR9jgTCqx2WTaSc/UmQ0pgo9Cbn/CRoEyXv+lIHhMygzFexv5p9ve8g=="
+      },
       "SkiaSharp": {
         "type": "Transitive",
         "resolved": "3.119.4",
@@ -427,6 +442,7 @@
           "Avalonia.Desktop": "[12.1.1, )",
           "Avalonia.Fonts.Inter": "[12.1.1, )",
           "Avalonia.Themes.Fluent": "[12.1.1, )",
+          "Avalonia.Wayland": "[12.1.1, )",
           "OctoHD.Core": "[1.0.0, )"
         }
       },

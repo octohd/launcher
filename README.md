@@ -94,6 +94,7 @@ Choose Apple Silicon for M-series Macs or Intel for older Macs, extract the ZIP,
 
 ## Changelog
 
+- **v1.0.6** — Fixed fractional display scaling on Wayland-based Linux desktops and added rendering checks for 100%, 150%, and 200% scaling.
 - **v1.0.5** — Fixed vertically misaligned button and badge text on macOS while preserving the existing layout on Windows and Linux.
 - **v1.0.4** — Improved reliability, expanded testing, and made releases more consistent across all supported platforms.
 - **v1.0.3** — Refreshed the launcher design, made patch and installation status easier to read, and added useful project links.

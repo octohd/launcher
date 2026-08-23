@@ -45,6 +45,17 @@
           "Avalonia": "12.1.1"
         }
       },
+      "Avalonia.Wayland": {
+        "type": "Direct",
+        "requested": "[12.1.1, )",
+        "resolved": "12.1.1",
+        "contentHash": "uRTHKag0Hlz5LeZc7TAVnpxG4eQFykMuGd4K8UpjPVCMf35jRmFw+yAF0t+bsoDbVoWIy/nA+mlYgc2Gi1l7JQ==",
+        "dependencies": {
+          "Avalonia": "12.1.1",
+          "Avalonia.FreeDesktop": "12.1.1",
+          "NWayland": "0.11.0"
+        }
+      },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
         "requested": "[10.0.11, )",
@@ -169,6 +180,11 @@
         "type": "Transitive",
         "resolved": "0.11.6",
         "contentHash": "NdNWGDiZ6eS/Mf/9+QHR91cj1K7Hy+PX9yrHI/zM7xFYuj9IWT2uxtB6sCHjrnxAeLV9fut1R6zHDUGKX6f9lQ=="
+      },
+      "NWayland": {
+        "type": "Transitive",
+        "resolved": "0.11.0",
+        "contentHash": "sTqw0WWcFd/UsF9JoWDn76+2CrCMrNZgR9jgTCqx2WTaSc/UmQ0pgo9Cbn/CRoEyXv+lIHhMygzFexv5p9ve8g=="
       },
       "SkiaSharp": {
         "type": "Transitive",
